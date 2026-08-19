@@ -102,6 +102,8 @@ int main(void)
 		
 		/* process line buffer here */
 		printf("You entered: %s\n", rl_line_buffer);
+		/* let say here is */
+		process_raw_line(rl_line_buffer);
 
 		/* Wrong, only clean when shell exited / env not configured */
 		if (ft_strncmp(rl_line_buffer, "clear", ft_strlen(rl_line_buffer)) == 0)

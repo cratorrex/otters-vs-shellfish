@@ -10,6 +10,7 @@ LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 SRCS = \
+	src/tokenizer.c \
 	src/parser.c	\
 	src/minishell.c 
 
