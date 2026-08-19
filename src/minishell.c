@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <stdlib.h>
-
-#define ECHO "echo"
+#include "minishell.h"
 
 /*
 readline, rl_clear_history, rl_on_new_line,
@@ -18,22 +13,63 @@ getenv, tcsetattr, tcgetattr, tgetent, tgetflag,
 tgetnum, tgetstr, tgoto, tputs
 */
 
-static char *line_read = (char *)NULL;
+/* 
+readline -> reading a prompt from a prompt, return the read line buff minus the newline and the prompt name
+add_history -> adding every prompt to the history list, it will be stored every time we navigate thru arrow up
+rl_on_new_line ->
+rl_clear_history ->
+rl_replace_line ->
+rl_redisplay -> 
 
-char	*rl_gets()
+access ->
+wait ->
+waitpid ->
+wait3 ->
+wait4 ->
+
+signal ->
+sigaction ->
+sigemptyset ->
+sigaddset ->
+
+kill ->
+exit ->
+getcwd ->
+chdir ->
+
+stat ->
+lstat ->
+fstat ->
+unlink ->
+execve ->
+*/
+
+// char	*rl_gets(char *line_read)
+// {
+// 	if (line_read)
+//     {
+// 		free (line_read);
+// 		line_read = (char *) NULL;
+// 	}
+// 	line_read = readline("urprompt>");
+// 	if (!line_read)
+// 		exit(0);
+// 	if (line_read && *line_read)
+// 		add_history(line_read);
+// 	return (line_read);
+// }
+
+void handle_sigint(int sig)
 {
-	if (line_read)
-    {
-		free (line_read);
-		line_read = (char *)NULL;
-	}
-	line_read = readline("minishell>");
-	if (!line_read)
-		exit(0);
-	if (line_read && *line_read)
-		add_history(line_read);
-	return (line_read);
+    (void)sig;
+
+    write(STDOUT_FILENO, "\n", 1);
+    rl_on_new_line();
+    rl_replace_line("", 0);
+    rl_redisplay();
 }
+
+
 
 int isfound_space(char *line)
 {
@@ -51,21 +87,30 @@ int isfound_space(char *line)
 
 int main(void)
 {
-	char *rl_line_buffer;
+	static char *rl_line_buffer;
 
+	signal(SIGINT, handle_sigint);
 	rl_line_buffer = NULL;
 	while (1)
 	{
-		if (rl_line_buffer)
-			rl_line_buffer = NULL;
 		rl_line_buffer = rl_gets();
-		if (!isfound_space(rl_line_buffer))
+		if (!rl_line_buffer)
 		{
-			// process the rl_line_buffer here
-			printf("%s\n", rl_line_buffer);
-			
+			printf("exit\n");
+			break ;
 		}
+		
+		/* process line buffer here */
+		printf("You entered: %s\n", rl_line_buffer);
+
+		/* Wrong, only clean when shell exited / env not configured */
+		if (ft_strncmp(rl_line_buffer, "clear", ft_strlen(rl_line_buffer)) == 0)
+			rl_clear_history();
+		/* if no longer used, clean up line buffer */
+		free_line_buffer(&rl_line_buffer);
 	}
+
+	rl_clear_history();
 	
-	return (0);
+	exit(0);
 }
