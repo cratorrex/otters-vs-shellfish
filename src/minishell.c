@@ -114,3 +114,46 @@ int main(void)
 	
 	exit(0);
 }
+
+// int main(void)
+// {
+// 	t_token *node_1;
+//     t_token *node_2;
+//     t_token *node_3;
+//     t_token *node_4;
+
+//     node_1 = token_new("echo", TOKEN_WORD);
+//     node_2 = token_new("hello", TOKEN_WORD);
+//     node_3 = token_new("|", TOKEN_PIPE);
+//     node_4 = token_new("cat", TOKEN_WORD);
+    
+//     printf("node_1->value = %s\n", node_1->value);
+//     printf("node_1->type = %u\n", node_1->type);
+//     printf("node_2->value = %s\n", node_2->value);
+//     printf("node_2->type = %u\n", node_2->type);
+//     printf("node_3->value = %s\n", node_3->value);
+//     printf("node_3->type = %u\n", node_3->type);
+//     printf("node_4->value = %s\n", node_4->value);
+//     printf("node_4->type = %u\n", node_4->type);
+
+
+//     token_add_back(&node_1, node_2);
+//     token_add_back(&node_1, node_3);
+//     token_add_back(&node_1, node_4);
+//     printf("node_1->value = %s | node_1->type = %u\n", node_1->value, node_1->type);
+//     printf("node_2->value = %s | node_2->type = %u\n", node_1->next->value, node_1->next->type);
+//     printf("node_3->value = %s | node_3->type = %u\n", node_1->next->next->value, node_1->next->next->type);
+//     printf("node_4->value = %s | node_4->type = %u\n", node_1->next->next->next->value, node_1->next->next->next->type);
+
+
+//     token_clear(&node_1);
+// 	char *res = ft_substr("Jason Nicholas Tansil", 0, 10);
+// 	printf("|%s|", res);
+// 	free(res);
+	
+// 	while
+	
+// 	/* TEST CASE 1 -> echo hello | cat */
+// 	/* TEST CASE 2 -> echo */
+
+// }

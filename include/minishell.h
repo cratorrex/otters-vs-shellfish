@@ -50,8 +50,9 @@ void free_line_buffer(char **line_buffer);
 
 /* tokenizer.c */
 t_token *token_new(char *value, t_token_type type);
-void token_add_back(t_token **lst, t_token new);
+void token_add_back(t_token **lst, t_token *new);
 void token_clear(t_token **lst);
+
 void process_raw_line(char *line_read);
 
 
