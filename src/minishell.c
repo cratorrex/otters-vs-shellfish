@@ -69,8 +69,6 @@ void handle_sigint(int sig)
     rl_redisplay();
 }
 
-
-
 int isfound_space(char *line)
 {
 	int i;
