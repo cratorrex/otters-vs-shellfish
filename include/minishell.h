@@ -16,6 +16,13 @@ typedef enum e_quote_state
     QUOTE_NONE
 }   t_quote_state;
 
+typedef enum e_lex_status
+{
+    LEX_OK,
+    LEX_MALLOC_ERROR,
+    LEX_UNCLOSED_QUOTE
+}   t_lex_status;
+
 typedef enum e_token_type
 {
     TOKEN_WORD,
@@ -55,12 +62,21 @@ typedef enum e_builtin_cmd
 char *rl_gets(void);
 void free_line_buffer(char **line_buffer);
 
-/* tokenizer.c */
+/* symbol_matcher */
+int isfound_space(char *line);
+int is_delimiter(char c);
+int is_operator(char c);
+
+/* node_utils.c */
 t_token *token_new(char *value, t_token_type type);
 void token_add_back(t_token **lst, t_token *new);
 void token_clear(t_token **lst);
 
-void process_raw_line(char *line_read);
+/* operator.c */
+t_token_type classify_operator(char *line);
+
+/* tokenizer.c */
+t_token *tokenizer(char *line_read);
 
 
 
