@@ -9,6 +9,13 @@
 #include <stdlib.h>
 #include <signal.h>
 
+typedef enum e_quote_state
+{
+    QUOTE_SINGLE,
+    QUOTE_DOUBLE,
+    QUOTE_NONE
+}   t_quote_state;
+
 typedef enum e_token_type
 {
     TOKEN_WORD,
