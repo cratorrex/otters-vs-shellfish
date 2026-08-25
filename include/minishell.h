@@ -1,6 +1,6 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
-# define _POSIX_C_SOURCE
+// # define _POSIX_C_SOURCE
 
 # include "libft.h"
 

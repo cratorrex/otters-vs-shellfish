@@ -21,7 +21,7 @@ int   chdir(const char *path)
 	ENOTDIR
 */
 
-int	msh_cd(char **string)
-{
+// int	msh_cd(char **string)
+// {
 
-}
+// }

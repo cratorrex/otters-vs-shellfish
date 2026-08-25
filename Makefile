@@ -10,6 +10,11 @@ LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 SRCS = \
+	builtins/msh_cd.c \
+	builtins/msh_pwd.c \
+	builtins/msh_echo.c \
+	builtins/msh_exit.c \
+	signal/msh_signal.c \
 	src/symbol_matcher.c \
 	src/node_utils.c 	\
 	src/operator.c 		\

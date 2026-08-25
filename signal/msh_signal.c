@@ -42,10 +42,10 @@ void	msig_prog_proc(void)
 
 }
 
-void main ()
-{
-	printf("hi");
-}
+// void main ()
+// {
+// 	printf("hi");
+// }
 
 /*
 Signal Action function understanding of documentation

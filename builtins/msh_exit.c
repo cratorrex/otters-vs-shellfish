@@ -1,21 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   msh_builtins.h                                     :+:      :+:    :+:   */
+/*   msh_exit.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: thtay <thtay@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/08/14 16:58:22 by thtay             #+#    #+#             */
-/*   Updated: 2026/08/14 16:58:24 by thtay            ###   ########.fr       */
+/*   Created: 2026/08/14 20:19:59 by thtay             #+#    #+#             */
+/*   Updated: 2026/08/14 20:20:00 by thtay            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifdef MINISHELL_H
-# ifndef MSH_BUILTINS_H
-#  define MSH_BUILTINS_H
+#include "minishell.h"
 
-int	msh_echo(int count, char **string);
-int	msh_pwd(char **string);
-
-# endif
-#endif
+//if ^D and exit {?num}

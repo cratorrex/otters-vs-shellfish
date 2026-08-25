@@ -1,31 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   msh_pwd.c                                          :+:      :+:    :+:   */
+/*   msh_builtins.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: thtay <thtay@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/08/14 17:00:10 by thtay             #+#    #+#             */
-/*   Updated: 2026/08/14 17:00:11 by thtay            ###   ########.fr       */
+/*   Created: 2026/08/14 16:58:22 by thtay             #+#    #+#             */
+/*   Updated: 2026/08/14 16:58:24 by thtay            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#ifdef MINISHELL_H
+# ifndef MSH_BUILTINS_H
+#  define MSH_BUILTINS_H
 
-//literally just prints out the current working directory
-//ERROR: If the buffer is not big enough (imagine...)
-//ENOENT
-//
-//assumption: we are allowed to use the MACRO errno
-int	msh_pwd(void)
-{
-	char	buf[4096];
+int	msh_echo(int count, char **string);
+int	msh_pwd(void);
 
-	if (getcwd(buf, sizeof(buf)) == NULL)
-	{
-		perror("msh_pwd");
-		return (errno);
-	}
-	printf("%s\n", buf);
-	return (0);
-}
+# endif
+#endif
