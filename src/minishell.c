@@ -81,8 +81,46 @@ void display_tokens(t_token *tokens)
 	}
 }
 
-int main(void)
+
+
+void structure_command(t_token *tokens, char **envp)
 {
+    t_token *current;
+
+    if (!tokens)
+        return ;
+    current = tokens;
+    // while (current)
+    // {
+    //     if (current->type)
+    //     current = current->next;
+    // }
+
+	if (!envp)
+	{
+		return ;
+	}
+
+    /*getenv*/
+	int i = 0;
+	while (envp[i])
+	{
+		printf("%s\n", envp[i]);
+		i++;
+	}
+    // char *env = getenv("PATH");
+    // printf("%s\n", env);
+    
+    // int res = execve("echo", "Jason Nicholas Tansil", )
+}
+
+int main(int argc, char **av, char **envp)
+{
+	if (argc != 1 && !*av)
+	{
+		printf("Usage: ./minishell\n");
+		return (1);
+	}
 	static char *rl_line_buffer;
 	t_token *tokens;
 
@@ -100,8 +138,18 @@ int main(void)
 		
 		/* process line buffer here */
 		tokens = tokenizer(rl_line_buffer);
+		if (!validate_syntax(tokens))
+		{
+			perror("syntax error\n");
+			token_clear(&tokens);
+			exit(1);
+		}
+		printf("VALID\n");
 		display_tokens(tokens);
+		structure_command(tokens, envp);
 		token_clear(&tokens);
+
+		/**/
 
 		/* Wrong, only clean when shell exited / env not configured */
 		if (ft_strncmp(rl_line_buffer, "clear", ft_strlen(rl_line_buffer)) == 0)

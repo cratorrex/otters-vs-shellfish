@@ -15,11 +15,14 @@ SRCS = \
 	builtins/msh_echo.c \
 	builtins/msh_exit.c \
 	signal/msh_signal.c \
+	src/ft_strcmp.c 	\
 	src/symbol_matcher.c \
-	src/node_utils.c 	\
+	src/token_node_utils.c 	\
 	src/operator.c 		\
 	src/parser.c		\
 	src/tokenizer.c 	\
+	src/redir_node_utils.c \
+	src/cmd_node_utils.c \
 	src/minishell.c 
 
 

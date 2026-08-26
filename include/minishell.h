@@ -46,10 +46,17 @@ typedef struct s_token
 	struct s_token	*next;
 }	t_token;
 
+typedef struct s_redir
+{
+	t_token_type type;
+	char *target;
+	struct s_redir *next;
+}	t_redir;
+
 typedef struct s_cmd
 {
 	char			**av;
-	char			*redirs;
+	t_redir			*redirs;
 	struct s_cmd	*next;
 }	t_cmd;
 
@@ -61,30 +68,45 @@ typedef enum e_builtin_cmd
 	EXPORT,
 	UNSET,
 	ENV,
-	EXIT
+	EXIT,
+	UNKNOWN_CMD
 }	t_builtin_cmd;
+
+typedef enum e_error_code
+{
+	SYNTAX_ERR,
+	CMD_NOT_FOUND_ERR,
+	UNCLOSED_BRACKET_ERR,
+	GENERIC_ERR
+}	t_error_code;
 
 /* parser.c */
 char			*rl_gets(void);
 void			free_line_buffer(char **line_buffer);
+int validate_syntax(t_token *tokens);
+
 
 /* symbol_matcher */
 int				isfound_space(char *line);
 int				is_delimiter(char c);
 int				is_operator(char c);
+int is_redirection(t_token_type token_type);
 
-/* node_utils.c */
+/* token_node_utils.c */
 t_token			*token_new(char *value, t_token_type type);
 void			token_add_back(t_token **lst, t_token *new);
 void			token_clear(t_token **lst);
+
+/* redir_node_utils.c */
+t_redir *redir_new(t_token_type type, char *target);
+void redir_add_back(t_redir **head, t_redir *new);
+
+/* cmd_node_utils.c */
 
 /* operator.c */
 t_token_type	classify_operator(char *line);
 
 /* tokenizer.c */
 t_token			*tokenizer(char *line_read);
-
-//
-//
 
 #endif
