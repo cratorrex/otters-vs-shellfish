@@ -102,6 +102,11 @@ t_redir *redir_new(t_token_type type, char *target);
 void redir_add_back(t_redir **head, t_redir *new);
 
 /* cmd_node_utils.c */
+t_cmd	*cmd_new(void);
+void	cmd_add_back(t_cmd **head, t_cmd *new);
+int get_av_count(t_token *tokens);
+t_cmd *parse_token(t_token *tokens);
+
 
 /* operator.c */
 t_token_type	classify_operator(char *line);

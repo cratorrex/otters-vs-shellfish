@@ -23,10 +23,10 @@ volatile sig_atomic_t	g_sign = 0;
 //init and then switch to msig_interactive
 void	msh_sig_init(void)
 {
-	struct sigaction	act;
+	// struct sigaction	act;
 
-	sigaction(SIGINT, &act, NULL);
-	sigaction(SIGQUIT, &act, NULL);
+	// sigaction(SIGINT, &act, NULL);
+	// sigaction(SIGQUIT, &act, NULL);
 }
 
 //if readline then use this

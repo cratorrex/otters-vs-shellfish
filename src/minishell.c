@@ -90,11 +90,13 @@ void structure_command(t_token *tokens, char **envp)
     if (!tokens)
         return ;
     current = tokens;
+	printf("current->value = %s\n", current->value);
     // while (current)
     // {
     //     if (current->type)
     //     current = current->next;
     // }
+	
 
 	if (!envp)
 	{
@@ -144,9 +146,13 @@ int main(int argc, char **av, char **envp)
 			token_clear(&tokens);
 			exit(1);
 		}
-		printf("VALID\n");
-		display_tokens(tokens);
-		structure_command(tokens, envp);
+		// display_tokens(tokens);
+		if (!envp)
+			return (1);
+		// structure_command(tokens, envp);
+		t_cmd *commands = parse_token(tokens);
+		if (!commands)
+			printf("commands NULL\n");
 		token_clear(&tokens);
 
 		/**/
