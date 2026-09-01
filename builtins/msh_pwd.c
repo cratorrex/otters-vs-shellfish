@@ -17,15 +17,34 @@
 //ENOENT
 //
 //assumption: we are allowed to use the MACRO errno
-int	msh_pwd(void)
+//pwd accepts any number of arguments, but disregards them...
+int	msh_pwd(int count, char **string)
 {
 	char	buf[4096];
 
-	if (getcwd(buf, sizeof(buf)) == NULL)
+	if (count && string)
 	{
-		perror("msh_pwd");
-		return (errno);
+		if (getcwd(buf, sizeof(buf)) == NULL)
+		{
+			perror("pwd");
+			return (errno);
+		}
+		printf("%s\n", buf);
 	}
-	printf("%s\n", buf);
 	return (0);
+}
+
+/*
+Additional rebase
+code the variant that takes in env and then prints out $PWD
+// match envp for $PWD and print it (using write)
+since PWD=[...], printf +4 
+*/
+int	msh_pwd_envp(int count, char **string, char **envp)
+{
+	if (count && string && envp)
+	{
+		
+	}
+	return 0;
 }
