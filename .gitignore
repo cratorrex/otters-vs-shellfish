@@ -1,0 +1,9 @@
+.gitignore
+*.o
+*.out
+*.txt
+*.sh
+*.a
+*.exe
+*.gch
+storage_rebase/
