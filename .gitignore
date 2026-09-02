@@ -6,4 +6,7 @@
 *.a
 *.exe
 *.gch
+minishell
+*.log
+*.json
 storage_rebase/
