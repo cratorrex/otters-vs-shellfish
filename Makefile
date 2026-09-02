@@ -10,19 +10,22 @@ LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 SRCS = \
-	builtins/msh_cd.c \
-	builtins/msh_pwd.c \
-	builtins/msh_echo.c \
-	builtins/msh_exit.c \
-	signal/msh_signal.c \
-	src/ft_strcmp.c 	\
-	src/symbol_matcher.c \
+	builtins/msh_cd.c		\
+	builtins/msh_pwd.c		\
+	builtins/msh_echo.c		\
+	builtins/msh_exit.c 	\
+	signal/msh_signal.c 	\
+	src/ft_strcmp.c 		\
+	src/symbol_matcher.c 	\
 	src/token_node_utils.c 	\
-	src/operator.c 		\
-	src/parser.c		\
-	src/tokenizer.c 	\
-	src/redir_node_utils.c \
-	src/cmd_node_utils.c \
+	src/operator.c 			\
+	src/readline.c			\
+	src/tokenizer.c 		\
+	src/redir_node_utils.c	\
+	src/cmd_node_utils.c 	\
+	src/parser.c 			\
+	src/expand_word.c 		\
+	src/expand_variable.c 	\
 	src/minishell.c 
 
 

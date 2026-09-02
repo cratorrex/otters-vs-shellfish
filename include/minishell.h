@@ -80,10 +80,15 @@ typedef enum e_error_code
 	GENERIC_ERR
 }	t_error_code;
 
-/* parser.c */
+typedef struct s_shell
+{
+	char	**envp;
+	int		exit_status;
+}	t_shell;
+
+/* readline.c */
 char			*rl_gets(void);
 void			free_line_buffer(char **line_buffer);
-int validate_syntax(t_token *tokens);
 
 
 /* symbol_matcher */
@@ -104,8 +109,7 @@ void redir_add_back(t_redir **head, t_redir *new);
 /* cmd_node_utils.c */
 t_cmd	*cmd_new(void);
 void	cmd_add_back(t_cmd **head, t_cmd *new);
-int get_av_count(t_token *tokens);
-t_cmd *parse_token(t_token *tokens);
+int cmd_add_args(char *value, t_cmd *cmd);
 
 
 /* operator.c */
@@ -113,5 +117,14 @@ t_token_type	classify_operator(char *line);
 
 /* tokenizer.c */
 t_token			*tokenizer(char *line_read);
+
+/* parser.c */
+int validate_syntax(t_token *tokens);
+t_cmd *parse_token(t_token *tokens);
+
+/* expander.c */
+char	*get_env_value(char *name, char **envp);
+char	*expand_variable(char *str, int *i, t_shell *shell);
+char	*expand_word(char *str, t_shell *shell);
 
 #endif

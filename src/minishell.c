@@ -44,21 +44,6 @@ unlink ->
 execve ->
 */
 
-// char	*rl_gets(char *line_read)
-// {
-// 	if (line_read)
-//     {
-// 		free (line_read);
-// 		line_read = (char *) NULL;
-// 	}
-// 	line_read = readline("urprompt>");
-// 	if (!line_read)
-// 		exit(0);
-// 	if (line_read && *line_read)
-// 		add_history(line_read);
-// 	return (line_read);
-// }
-
 void handle_sigint(int sig)
 {
     (void)sig;
@@ -81,39 +66,49 @@ void display_tokens(t_token *tokens)
 	}
 }
 
-
-
-void structure_command(t_token *tokens, char **envp)
+void	print_cmd_list(t_cmd *cmd)
 {
-    t_token *current;
+	int		i;
+	int		cmd_index;
+	t_redir	*redir;
 
-    if (!tokens)
-        return ;
-    current = tokens;
-	printf("current->value = %s\n", current->value);
-    // while (current)
-    // {
-    //     if (current->type)
-    //     current = current->next;
-    // }
-	
-
-	if (!envp)
+	cmd_index = 0;
+	while (cmd)
 	{
-		return ;
-	}
+		printf("\n========== CMD %d ==========\n", cmd_index);
 
-    /*getenv*/
-	int i = 0;
-	while (envp[i])
-	{
-		printf("%s\n", envp[i]);
-		i++;
+		printf("Arguments:\n");
+		if (!cmd->av)
+			printf("  (none)\n");
+		else
+		{
+			i = 0;
+			while (cmd->av[i])
+			{
+				printf("  av[%d] = \"%s\"\n", i, cmd->av[i]);
+				i++;
+			}
+		}
+
+		printf("Redirections:\n");
+		if (!cmd->redirs)
+			printf("  (none)\n");
+		else
+		{
+			redir = cmd->redirs;
+			while (redir)
+			{
+				printf("  type = %d, target = \"%s\"\n",
+					redir->type, redir->target);
+				redir = redir->next;
+			}
+		}
+
+		printf("============================\n");
+
+		cmd = cmd->next;
+		cmd_index++;
 	}
-    // char *env = getenv("PATH");
-    // printf("%s\n", env);
-    
-    // int res = execve("echo", "Jason Nicholas Tansil", )
 }
 
 int main(int argc, char **av, char **envp)
@@ -142,21 +137,25 @@ int main(int argc, char **av, char **envp)
 		tokens = tokenizer(rl_line_buffer);
 		if (!validate_syntax(tokens))
 		{
-			perror("syntax error\n");
+			printf("syntax error\n");
 			token_clear(&tokens);
 			exit(1);
 		}
-		// display_tokens(tokens);
 		if (!envp)
 			return (1);
-		// structure_command(tokens, envp);
 		t_cmd *commands = parse_token(tokens);
 		if (!commands)
-			printf("commands NULL\n");
+			printf("commands is NULL\n");
+		else
+			print_cmd_list(commands);
+		/* preparing the command for expansion of variable and quote removal */
+		t_shell *shell;
+
+		shell = NULL;
+		if (!envp)
+			shell->envp = envp;
+		
 		token_clear(&tokens);
-
-		/**/
-
 		/* Wrong, only clean when shell exited / env not configured */
 		if (ft_strncmp(rl_line_buffer, "clear", ft_strlen(rl_line_buffer)) == 0)
 			rl_clear_history();
@@ -168,44 +167,3 @@ int main(int argc, char **av, char **envp)
 	
 	exit(0);
 }
-
-/* For testing only, clean up later */
-/*
-int main(void)
-{
-	t_token *node_1;
-    t_token *node_2;
-    t_token *node_3;
-    t_token *node_4;
-
-    node_1 = token_new("echo", TOKEN_WORD);
-    node_2 = token_new("hello", TOKEN_WORD);
-    node_3 = token_new("|", TOKEN_PIPE);
-    node_4 = token_new("cat", TOKEN_WORD);
-    
-    printf("node_1->value = %s\n", node_1->value);
-    printf("node_1->type = %u\n", node_1->type);
-    printf("node_2->value = %s\n", node_2->value);
-    printf("node_2->type = %u\n", node_2->type);
-    printf("node_3->value = %s\n", node_3->value);
-    printf("node_3->type = %u\n", node_3->type);
-    printf("node_4->value = %s\n", node_4->value);
-    printf("node_4->type = %u\n", node_4->type);
-
-
-    token_add_back(&node_1, node_2);
-    token_add_back(&node_1, node_3);
-    token_add_back(&node_1, node_4);
-    printf("node_1->value = %s | node_1->type = %u\n", node_1->value, node_1->type);
-    printf("node_2->value = %s | node_2->type = %u\n", node_1->next->value, node_1->next->type);
-    printf("node_3->value = %s | node_3->type = %u\n", node_1->next->next->value, node_1->next->next->type);
-    printf("node_4->value = %s | node_4->type = %u\n", node_1->next->next->next->value, node_1->next->next->next->type);
-
-
-    token_clear(&node_1);
-	char *res = ft_substr("Jason Nicholas Tansil", 0, 10);
-	printf("|%s|", res);
-	free(res);
-
-}
-*/
