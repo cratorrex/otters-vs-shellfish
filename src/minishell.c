@@ -111,6 +111,30 @@ void	print_cmd_list(t_cmd *cmd)
 	}
 }
 
+// void executor_dummy(t_cmd *commands, t_shell *shell)
+// {
+	
+// }
+
+int is_empty_prompt(const char *line_read)
+{
+	return (ft_strlen(line_read) == 0);
+}
+
+int is_only_space(const char *line_read)
+{
+	int i;
+	int len;
+
+	i = 0;
+	while (line_read[i] && line_read[i] == ' ')
+		i++;
+	len = ft_strlen(line_read);
+	if (len == i)
+		return (1);
+	return (0);
+}
+
 int main(int argc, char **av, char **envp)
 {
 	if (argc != 1 && !*av)
@@ -127,35 +151,73 @@ int main(int argc, char **av, char **envp)
 	while (1)
 	{
 		rl_line_buffer = rl_gets();
+
+		//// Clean up later
+		/* handle signal CTRL + D */
 		if (!rl_line_buffer)
 		{
 			printf("exit\n");
 			break ;
 		}
+		/* handle empty prompt & prompt that contains only spaces */
+		if (is_empty_prompt(rl_line_buffer) || is_only_space(rl_line_buffer))
+		{
+			free_line_buffer(&rl_line_buffer);
+			continue ;
+		}
+		////
+
+
 		
-		/* process line buffer here */
+		//// TOKENIZER
+		/* tokenize word from rl_line_buffer based on token type */
 		tokens = tokenizer(rl_line_buffer);
 		if (!validate_syntax(tokens))
 		{
 			printf("syntax error\n");
+			free_line_buffer(&rl_line_buffer);
+			token_clear(&tokens);
+			/* return back exit code */
+			continue ;
+		}
+		if (!envp)
+		{
+			printf("environment path not found\n");
+			free_line_buffer(&rl_line_buffer);
 			token_clear(&tokens);
 			exit(1);
 		}
-		if (!envp)
-			return (1);
+		////
+
+
+		//// PARSER
+		/* parsing token into command structure */
 		t_cmd *commands = parse_token(tokens);
 		if (!commands)
 			printf("commands is NULL\n");
 		else
+		{
+			printf("Before expansion\n");
 			print_cmd_list(commands);
+		}
 		/* preparing the command for expansion of variable and quote removal */
-		t_shell *shell;
+		t_shell shell;
 
-		shell = NULL;
-		if (!envp)
-			shell->envp = envp;
+		shell.envp = envp;
+		shell.exit_status = 0;
 		
+		if (!expand_command(commands, &shell))
+		{
+			free_line_buffer(&rl_line_buffer);
+			token_clear(&tokens);
+			/* clean up command structure */
+			exit(1);
+		}
+		printf("\n\nAfter expansion\n");
+		print_cmd_list(commands);
 		token_clear(&tokens);
+		////
+
 		/* Wrong, only clean when shell exited / env not configured */
 		if (ft_strncmp(rl_line_buffer, "clear", ft_strlen(rl_line_buffer)) == 0)
 			rl_clear_history();

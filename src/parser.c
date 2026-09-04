@@ -73,6 +73,8 @@ t_cmd *parse_token(t_token *tokens)
 		if (!parse_command(&tokens, new_cmd))
 		{
 			/* free up memory here */
+			token_clear(&tokens);
+			free(new_cmd);
 			return (NULL);
 		}
 		cmd_add_back(&head_cmd, new_cmd);

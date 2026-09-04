@@ -126,5 +126,6 @@ t_cmd *parse_token(t_token *tokens);
 char	*get_env_value(char *name, char **envp);
 char	*expand_variable(char *str, int *i, t_shell *shell);
 char	*expand_word(char *str, t_shell *shell);
+int expand_command(t_cmd *cmd, t_shell *shell);
 
 #endif

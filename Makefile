@@ -26,6 +26,7 @@ SRCS = \
 	src/parser.c 			\
 	src/expand_word.c 		\
 	src/expand_variable.c 	\
+	src/expand_command.c 	\
 	src/minishell.c 
 
 
