@@ -47,7 +47,7 @@ case no need to handle "-" (back)
 */
 int	msh_cd(int count, char **string)
 {
-	char	*co_pwd[2];
+	//char	*co_pwd[2];
 
 	if (count > 2)
 		return (printf("msh: cd: too many arguments\n"), 1);

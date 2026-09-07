@@ -40,7 +40,7 @@ code the variant that takes in env and then prints out $PWD
 // match envp for $PWD and print it (using write)
 since PWD=[...], printf +4 
 */
-int	msh_pwd_envp(int count, char **string, char **envp)
+/* int	msh_pwd_envp(int count, char **string, char **envp)
 {
 	if (count && string && envp)
 	{
@@ -48,3 +48,4 @@ int	msh_pwd_envp(int count, char **string, char **envp)
 	}
 	return 0;
 }
+ */
