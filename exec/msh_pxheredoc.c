@@ -21,6 +21,8 @@ int	msh_pxheredoc(char *delimiter/* , int mode */)
 	int		ret_fd;
 
 	ret_fd = open("/tmp", __O_TMPFILE | O_RDWR);
+	if (ret_fd < 0)
+		return (-1);
 	while (1)
 	{
 		ptr = get_next_line(0);
@@ -28,11 +30,13 @@ int	msh_pxheredoc(char *delimiter/* , int mode */)
 		{
 			if (ft_strlen(ptr) - 1 == ft_strlen(delimiter))
 				break ;
+			{/*expansion stuff here*/}
 		}
 		ft_putstr_fd(ptr, ret_fd);
 		free(ptr);
 	}
-	free(ptr);
+	if (ptr != NULL)
+		free(ptr);
 	return (ret_fd);
 }
 
