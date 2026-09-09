@@ -25,10 +25,14 @@ int	msh_pxheredoc(char *delimiter/* , int mode */)
 	{
 		ptr = get_next_line(0);
 		if (!ptr || ft_strncmp(ptr, delimiter, ft_strlen(delimiter)) == 0)
-			break ;
+		{
+			if (ft_strlen(ptr) == ft_strlen(delimiter))
+				break ;
+		}
 		ft_putstr_fd(ptr, ret_fd);
 		free(ptr);
 	}
+	free(ptr);
 	return (ret_fd);
 }
 

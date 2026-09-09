@@ -67,14 +67,14 @@ int	mpx_traverse_left(t_cmd *pass/* , t_mpx_fd **store */)
 					close(ret_fd);
 					ret_fd = 0;
 				}
-				ret_fd = msh_pxheredoc(pass->redirs->target, 0);
+				ret_fd = msh_pxheredoc(pass->redirs->target/* , 0 */);
 				/* something something get_next_line */
 			}
 			pass->redirs = pass->redirs->next;
 		}
 		pass = pass->next;
 	}
-	return 0;
+	return (ret_fd);
 }
 
 //stop early if file cannot be accessed
