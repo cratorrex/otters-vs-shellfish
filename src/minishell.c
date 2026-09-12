@@ -172,6 +172,8 @@ int main(int argc, char **av, char **envp)
 		//// TOKENIZER
 		/* tokenize word from rl_line_buffer based on token type */
 		tokens = tokenizer(rl_line_buffer);
+		if (!tokens)
+			return (1);
 		if (!validate_syntax(tokens))
 		{
 			printf("syntax error\n");

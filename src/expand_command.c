@@ -1,5 +1,19 @@
 #include "minishell.h"
 
+static int contains_quote(const char *str)
+{
+    int i;
+
+    i = 0;
+    while (str[i])
+    {
+        if (str[i] == '\'' || str[i] == '"')
+            return (1);
+        i++;
+    }
+    return (0);
+}
+
 static int expand_argvs(t_cmd *cmd, t_shell *shell)
 {
     int i;
@@ -29,15 +43,17 @@ static int expand_redirs(t_cmd *cmd, t_shell *shell)
     redir = cmd->redirs; 
     
     while (redir) 
-    { 
-        old_str = redir->target; 
+    {
+        old_str = redir->target;
+        if (cmd->redirs->type == TOKEN_HEREDOC && contains_quote(old_str))
+            cmd->redirs->type = TOKEN_HEREDOC_QUOTED;
         new_str = expand_word(old_str, shell);
         if (!new_str) 
             return (0); 
         free(old_str); 
         redir->target = new_str;
-        redir = redir->next; 
-    } 
+        redir = redir->next;
+    }
     return (1);
 }
 
