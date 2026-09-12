@@ -55,6 +55,41 @@ static char	*handle_variable(char *str, int *i,
 	return (result);
 }
 
+char *expand_word_without_env(char *str)
+{
+	int		i;
+	int		single_quote;
+	int		double_quote;
+	char	*result;
+
+	i = 0;
+	single_quote = 0;
+	double_quote = 0;
+
+	result = ft_strdup("");
+	if (!result)
+		return (NULL);
+
+	while (str[i])
+	{
+		if (handle_quote(str[i], &single_quote, &double_quote))
+			i++;
+		else
+		{
+			result = append_char(result, str[i]);
+			if (!result)
+				return (NULL);
+			i++;
+		}
+
+		if (!result)
+			return (NULL);
+	}
+
+	return (result);
+}
+
+
 char	*expand_word(char *str, t_shell *shell)
 {
 	int		i;
