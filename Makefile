@@ -27,6 +27,7 @@ SRCS = \
 	src/expand_word.c 		\
 	src/expand_variable.c 	\
 	src/expand_command.c 	\
+	src/environment_variable.c \
 	src/minishell.c 
 
 

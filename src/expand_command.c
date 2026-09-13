@@ -37,25 +37,29 @@ static int expand_argvs(t_cmd *cmd, t_shell *shell)
 static int expand_redirs(t_cmd *cmd, t_shell *shell)
 {
     t_redir *redir;
+
+    char *old_str;
+    char *new_str;
+    redir = cmd->redirs;
     
-    char *old_str; 
-    char *new_str; 
-    redir = cmd->redirs; 
-    
-    while (redir) 
+    while (redir)
     {
         old_str = redir->target;
-        if (cmd->redirs->type == TOKEN_HEREDOC)
+        if (redir->type == TOKEN_HEREDOC)
         {
             if (contains_quote(old_str))
-                cmd->redirs->type = TOKEN_HEREDOC_QUOTED;
+                redir->type = TOKEN_HEREDOC_QUOTED;
             new_str = expand_word_without_env(old_str);
         }
         else
             new_str = expand_word(old_str, shell);
         if (!new_str)
             return (0);
-        free(old_str);
+        if (old_str)
+        {
+            free(old_str);
+            old_str = NULL;
+        }
         redir->target = new_str;
         redir = redir->next;
     }
