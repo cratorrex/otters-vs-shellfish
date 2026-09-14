@@ -34,80 +34,6 @@
 // CLOSE THE FDs BEFORE OPENING A NEW ONE
 
 
-//don't stop until all redirs found, but error the first file
-int	mpx_traverse_left(t_cmd *pass/* , t_mpx_fd **store */)
-{
-	int	ret_fd;
-	int	err;
-
-	ret_fd = 0;
-	err = 0;
-	while (pass != NULL)
-	{
-		while (pass->redirs != NULL)
-		{
-			if (pass->redirs->type == TOKEN_REDIR_IN && ret_fd >= 0)
-			{
-				if (ret_fd > 2)
-					close(ret_fd);
-				ret_fd = open(pass->redirs->target, O_RDONLY);
-				if (ret_fd < 0)
-					continue ;
-				// dup2(ret_fd, 0);
-				//dup to fd0 later...
-			}
-			else if (pass->redirs->type == TOKEN_HEREDOC)//edgecase
-			//input just needs to be expanded (if heredoc unquoted)
-			//all sent in is already bash-compliant, ie empty word vs NULL
-			//\n is not accepted so that case is not handled
-			//within heredoc '\n' is accepted, and unclosed quotes too
-			{
-				if (ret_fd > 2)
-				{
-					close(ret_fd);
-					ret_fd = 0;
-				}
-				ret_fd = msh_pxheredoc(pass->redirs->target/* , 0 */);
-				/* something something get_next_line */
-			}
-			pass->redirs = pass->redirs->next;
-		}
-		pass = pass->next;
-	}
-	return (ret_fd);
-}
-
-//stop early if file cannot be accessed
-/* int	mpx_traverse_right(t_cmd *pass, t_mpx_fd **store)
-{
-	int	ret_fd;
-
-	ret_fd = 1;
-	while (pass != NULL)
-	{
-		while (pass->redirs != NULL)
-		{
-			if (pass->redirs->type == TOKEN_REDIR_OUT)
-			{
-				if(ret_fd > 2)
-					close(ret_fd);
-				ret_fd = open(pass->redirs->target, O_TRUNC);
-			}
-			else if (pass->redirs->type == TOKEN_APPEND)
-			{
-				if(ret_fd > 2)
-					close(ret_fd);
-				ret_fd = open(pass->redirs->target, O_APPEND);
-			}
-			if (ret_fd < 0)
-				return (ret_fd);
-			pass->redirs = pass->redirs->next;
-		}
-		pass = pass->next;
-	}
-	return (ret_fd);
-}
- */
 //mallocs a fd storage that will be passed to pipes
 t_mpx_fd	*mpx_traverse_pipe(t_cmd *cmd)
 {
@@ -130,15 +56,15 @@ t_mpx_fd	*mpx_traverse_pipe(t_cmd *cmd)
 	return (store);
 }
 
-/* int	msh_pipexec(t_cmd *cmd)
+int	msh_pipexec(t_cmd *cmd)
 {
 	t_mpx_fd	*store;
 	//t_mpx_fd	*pipe;
 	int	i;
 
 	i = 0;
-	//store = mpx_traverse_pipe(cmd);
-	//mpx_traverse_left(cmd, &store);
+	store = mpx_traverse_pipe(cmd);
+	mpx_traverse_left(cmd, &store);
 	if (store[i][0] < 0)//move this outside... we parse all
 	//redirs first before doing err_exec
 	{} //stop here, give an error
@@ -150,4 +76,3 @@ t_mpx_fd	*mpx_traverse_pipe(t_cmd *cmd)
 }
 
 //the tedium is going to kill me...
- */
