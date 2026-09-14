@@ -12,32 +12,32 @@
 
 #include "minishell.h"
 
+static char	*mhd_expand_heredoc(char *string /*, env*/)
+{
+
+}
+
 //if delim has quotes there should be a notice of it.
 //mode0 means we expand environment
 //mode1 means the delim was quoted 
-int	msh_pxheredoc(char *delimiter/* , int mode */)
+int	msh_pxheredoc(char *delimiter, int mode /*, env*/)
 {
 	char	*ptr;
 	int		ret_fd;
 
 	ret_fd = open("/tmp", __O_TMPFILE | O_RDWR);
-	if (ret_fd < 0)
-		return (-1);
-	while (1)
+	while (ret_fd > 2)
 	{
 		ptr = get_next_line(0);
 		if (!ptr || ft_strncmp(ptr, delimiter, ft_strlen(delimiter)) == 0)
 		{
 			if (!ptr)
-			{
 				printf("msh: warning: here-document delimited by end-of-file\
 (wanted `%s')\n", delimiter);
-				break;
-			}
-			if (ft_strlen(ptr) - 1 == ft_strlen(delimiter))
+			if (!ptr || ft_strlen(ptr) - 1 == ft_strlen(delimiter))
 				break ;
-			{/*expansion stuff here*/}
 		}
+		ptr = mhd_expand_heredoc(ptr);
 		ft_putstr_fd(ptr, ret_fd);
 		free(ptr);
 	}

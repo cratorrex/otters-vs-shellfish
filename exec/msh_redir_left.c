@@ -76,23 +76,21 @@ static void	mpx_ret_redirhd(t_redir *redir, int *fd, int *err)
 {
 	int	tempfd;
 
-	if (redir->type == TOKEN_HEREDOC || redir->type == 6)
+	if (redir->type == TOKEN_HEREDOC || redir->type == TOKEN_HEREDOC_QUOTED)
 	{
 		if (*fd > 2)
+		{
 			close(*fd);
-		if (*fd < 0)
-		{
-			tempfd = msh_pxheredoc(redir->target/* , redir->type - 5 */);
-			if (tempfd > 2)
-				close(tempfd);
+			*fd = 1;
 		}
+		tempfd = msh_pxheredoc(redir->target, redir->type - 5);
+		printf("fdhd: %i\n", tempfd);
+		if (tempfd < 0 && *err == 0)
+			*err = errno;
+		if (*fd < 0 && tempfd > 2)
+			close(tempfd);
 		else
-		{
-			*fd = msh_pxheredoc(redir->target/* , redir->type - 5 */);
-			printf("fdhd: %i\n", *fd);
-			if (*fd < 0)
-				*err = errno;
-		}
+			*fd = tempfd;
 	}
 }
 
@@ -110,9 +108,7 @@ int	mpx_traverse_left(t_cmd *pass, t_mpx_fd **store)
 		while (redir != NULL)
 		{
 			if (mpx_ret_redirin(redir, &(*store[i][0]), &err))
-			{
 				printf("fdretin: %i\n", *store[i][0]);
-			}
 			else
 				mpx_ret_redirhd(redir, &(*store[i][0]), &err);
 			redir = redir->next;
