@@ -28,6 +28,12 @@ int	msh_pxheredoc(char *delimiter/* , int mode */)
 		ptr = get_next_line(0);
 		if (!ptr || ft_strncmp(ptr, delimiter, ft_strlen(delimiter)) == 0)
 		{
+			if (!ptr)
+			{
+				printf("msh: warning: here-document delimited by end-of-file\
+(wanted `%s')\n", delimiter);
+				break;
+			}
 			if (ft_strlen(ptr) - 1 == ft_strlen(delimiter))
 				break ;
 			{/*expansion stuff here*/}

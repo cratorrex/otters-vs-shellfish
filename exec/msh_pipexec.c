@@ -64,13 +64,12 @@ int	msh_pipexec(t_cmd *cmd)
 
 	i = 0;
 	store = mpx_traverse_pipe(cmd);
-	mpx_traverse_left(cmd, &store);
-	if (store[i][0] < 0)//move this outside... we parse all
-	//redirs first before doing err_exec
-	{} //stop here, give an error
-	//mpx_traverse_right(cmd, &store);
-	if (store[i][1] < 0) //exit
-	{}
+	if (mpx_traverse_left(cmd, &store) > 0)
+		/*stop exec return error*/;
+	if (mpx_traverse_right(cmd, &store))
+	{
+		
+	}
 	//smthn smthn send to exec and then free
 	return 0;
 }

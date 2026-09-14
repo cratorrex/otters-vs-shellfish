@@ -56,7 +56,7 @@
 
 static int	mpx_ret_redirin(t_redir *redir, int *fd, int *err)
 {
-	if (redir->type == TOKEN_REDIR_IN && *fd >= 0)
+	if (redir->type == TOKEN_REDIR_IN && *fd >= 0 && *err == 0)
 	{
 		if (*fd > 2)
 			close(*fd);
@@ -120,5 +120,7 @@ int	mpx_traverse_left(t_cmd *pass, t_mpx_fd **store)
 		pass = pass->next;
 		i++;
 	}
-	return (*store[i - 1][0]);
+	return (err);
 }
+
+//fix this for errors and 
