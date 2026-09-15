@@ -56,10 +56,10 @@ t_mpx_fd	*mpx_traverse_pipe(t_cmd *cmd)
 	return (store);
 }
 
-t_mpx_fd	*msh_pipexec(t_cmd *cmd)
+/* t_mpx_fd	* */int msh_pipexec(t_cmd *cmd)
 {
 	t_mpx_fd	*store;
-	t_mpx_fd	*pipe;
+	//t_mpx_fd	*pipe;
 	int	i;
 
 	i = 0;
@@ -73,7 +73,7 @@ t_mpx_fd	*msh_pipexec(t_cmd *cmd)
 	}
 
 	//smthn smthn send to exec and then free
-	return (store);
+	return (1);
 }
 
 //the tedium is going to kill me...

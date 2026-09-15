@@ -217,13 +217,18 @@ int main(int argc, char **av, char **envp)
 		printf("\n\nAfter expansion\n");
 		print_cmd_list(commands);
 
-		//t_mpx_fd *mpx_fds = mpx_traverse_pipe(commands);
-		int maxima = mpx_traverse_left(commands/* , &mpx_fds */);
+		t_mpx_fd *mpx_fds = mpx_traverse_pipe(commands);
+		int maxima = mpx_traverse_left(commands, &mpx_fds);
 		if (!maxima)
 		{
 			printf("Entering here\n");
 		}
-		close (maxima);
+		//close (maxima);
+		maxima = mpx_traverse_right(commands, &mpx_fds);
+		if (!maxima)
+		{
+			printf("Entering here\n");
+		}
 		token_clear(&tokens);
 		////
 

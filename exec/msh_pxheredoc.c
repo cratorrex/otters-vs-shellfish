@@ -12,9 +12,11 @@
 
 #include "minishell.h"
 
+//ret_fd = open("/tmp", __O_TMPFILE | O_RDWR, 0777);
+
 static char	*mhd_expand_heredoc(char *string /*, env*/)
 {
-
+	return string;
 }
 
 //if delim has quotes there should be a notice of it.
@@ -25,7 +27,8 @@ int	msh_pxheredoc(char *delimiter, int mode /*, env*/)
 	char	*ptr;
 	int		ret_fd;
 
-	ret_fd = open("/tmp", __O_TMPFILE | O_RDWR);
+	// ret_fd = open("/tmp", __O_TMPFILE | O_RDWR , 0777);
+	ret_fd = open(".tmp", O_CREAT | O_RDWR | O_TRUNC, 0777);
 	while (ret_fd > 2)
 	{
 		ptr = get_next_line(0);
@@ -37,12 +40,15 @@ int	msh_pxheredoc(char *delimiter, int mode /*, env*/)
 			if (!ptr || ft_strlen(ptr) - 1 == ft_strlen(delimiter))
 				break ;
 		}
-		ptr = mhd_expand_heredoc(ptr);
+		if (mode == 0)
+			ptr = mhd_expand_heredoc(ptr);
 		ft_putstr_fd(ptr, ret_fd);
 		free(ptr);
 	}
 	if (ptr != NULL)
 		free(ptr);
+	close(ret_fd);
+	ret_fd = open(".tmp", O_RDWR);
 	return (ret_fd);
 }
 

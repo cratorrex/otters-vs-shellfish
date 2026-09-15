@@ -91,6 +91,17 @@ static void	mpx_ret_redirhd(t_redir *redir, int *fd, int *err)
 			close(tempfd);
 		else
 			*fd = tempfd;
+
+		int sto_store = dup(0);
+		dup2(*fd, 0);
+		close(*fd);
+
+		char te[2] = "";
+		int re = read(0, te, 1);
+		while (re)
+			{printf("%s", te); re = read(0, te, 1);}
+		printf("%i\n", re);
+		dup2(sto_store, 0);
 	}
 }
 
