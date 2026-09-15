@@ -12,6 +12,16 @@
 
 #include "minishell.h"
 
+// int	mpx_ret_redirout()
+// {
+
+// }
+
+// int	mpx_ret_redirapn()
+// {
+
+// }
+
 //stop early if file cannot be accessed
 int	mpx_traverse_right(t_cmd *pass, t_mpx_fd **store)
 {
@@ -26,13 +36,13 @@ int	mpx_traverse_right(t_cmd *pass, t_mpx_fd **store)
 		{
 			if (redir->type == 3 || redir->type == 4)
 			{
-				if (*store[i][1] > 2)
-					close(*store[i][1]);
+				if ((*store)[i][1] > 2)
+					close((*store)[i][1]);
 				if (redir->type == TOKEN_REDIR_OUT)
-					*store[i][1] = open(redir->target, O_CREAT | O_TRUNC, 0777);
+					(*store)[i][1] = open(redir->target, O_CREAT | O_TRUNC, 0777);
 				else if (redir->type == TOKEN_APPEND)
-					*store[i][1] = open(redir->target, O_CREAT | O_APPEND, 0777);
-				printf("fdout: %i\n", *store[i][1]);
+					(*store)[i][1] = open(redir->target, O_CREAT | O_APPEND, 0777);
+				printf("fdout: %i\n", (*store)[i][1]);
 			}
 			if ((*store)[i][1] < 0)
 				return (errno);
