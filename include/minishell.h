@@ -125,7 +125,9 @@ t_cmd *parse_token(t_token *tokens);
 
 /* environment_variable.c */
 char **init_env_variable(char **envp);
-char **add_new_variable(char **envp, char *new_var);
+char **add_new_variable(char **existing_env, char *new_var);
+char **remove_variable(char **existing_env, char *var);
+char **update_variable(char **existing_env, char *var);
 
 /* expander.c */
 char	*get_env_value(char *name, char **envp);
