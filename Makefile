@@ -28,6 +28,7 @@ SRCS = \
 	src/expand_variable.c 	\
 	src/expand_command.c 	\
 	src/environment_variable.c \
+	src/debug_functions.c		\
 	src/minishell.c 
 
 

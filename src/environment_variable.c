@@ -77,18 +77,18 @@ char **add_new_variable(char **existing_env, char *new_var)
     return (new_env);
 }
 
-static int get_target_variable_index(char **existing_env, char *var)
+int get_target_variable_index(char **existing_env, char *target_var)
 {
     int len;
     int i;
 
-    if (!*existing_env || !var)
+    if (!*existing_env || !target_var)
         return (-1);
-    len = ft_strlen(var);
+    len = ft_strlen(target_var);
     i = 0;
     while (existing_env[i])
     {
-        if (ft_strncmp(existing_env[i], var, len) == 0
+        if (ft_strncmp(existing_env[i], target_var, len) == 0
             && existing_env[i][len] == '=')
         {
             return (i);
@@ -134,17 +134,32 @@ char **remove_variable(char **existing_env, char *var)
     freed_up_existing_env(existing_env);
     return (new_env);
 }
+char *get_env_key(char *var)
+{
+    char *key;
+    if (!var)
+        return (NULL);
+    key = ft_substr(var, 0, ft_strchr(var, '=') - var);
+    return (key);
+}
 
 char	**update_variable(char **existing_env, char *var)
 {
 	int		index;
 	char	*new_var;
+    char *key;
 
 	if (!existing_env || !var)
 		return (existing_env);
-	index = get_target_variable_index(existing_env, var);
+    key = get_env_key(var);
+    if (!key)
+    {
+        return (NULL);
+    }
+	index = get_target_variable_index(existing_env, key);
 	if (index == -1)
 		return (existing_env);
+    free(key);
 	new_var = ft_strdup(var);
 	if (!new_var)
 		return (NULL);

@@ -128,6 +128,8 @@ char **init_env_variable(char **envp);
 char **add_new_variable(char **existing_env, char *new_var);
 char **remove_variable(char **existing_env, char *var);
 char **update_variable(char **existing_env, char *var);
+int get_target_variable_index(char **existing_env, char *target_var);
+int search_variable(char **existing_env, char *target_var);
 
 /* expander.c */
 char	*get_env_value(char *name, char **envp);
@@ -135,5 +137,10 @@ char	*expand_variable(char *str, int *i, t_shell *shell);
 char	*expand_word(char *str, t_shell *shell);
 char *expand_word_without_env(char *str);
 int expand_command(t_cmd *cmd, t_shell *shell);
+
+/* debug_functions */
+void display_tokens(t_token *tokens);
+void	print_cmd_list(t_cmd *cmd);
+void print_env(char **envp, char *message);
 
 #endif
