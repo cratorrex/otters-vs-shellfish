@@ -88,6 +88,13 @@ static void adding_token(char **token, t_token **token_lst)
     token_add_back(token_lst, new_token);
 }
 
+
+void clean_up_token_lst(t_token *token_lst)
+{
+    if (!token_lst)
+        return ;
+}
+
 t_token *tokenizer(char *line_read)
 {
     int i;
@@ -108,7 +115,10 @@ t_token *tokenizer(char *line_read)
         else
             token = read_token(line_read, &i);
         if (!token)
+        {
+            token_clear(&token_lst);
             return (NULL);
+        }
         adding_token(&token, &token_lst);
     }
     return (token_lst);

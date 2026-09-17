@@ -1,7 +1,7 @@
 NAME := minishell
 
 CC := cc
-CC_FLAGS := -Wall -Wextra -Werror -Iinclude
+CC_FLAGS := -Wall -Wextra -Werror -Iinclude -g
 LD_FLAGS := -lreadline -lhistory
 
 HEADER := minishell.h
@@ -10,25 +10,27 @@ LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 SRCS = \
-	builtins/msh_cd.c		\
-	builtins/msh_pwd.c		\
-	builtins/msh_echo.c		\
-	builtins/msh_exit.c 	\
-	signal/msh_signal.c 	\
-	src/ft_strcmp.c 		\
-	src/symbol_matcher.c 	\
-	src/token_node_utils.c 	\
-	src/operator.c 			\
-	src/readline.c			\
-	src/tokenizer.c 		\
-	src/redir_node_utils.c	\
-	src/cmd_node_utils.c 	\
-	src/parser.c 			\
-	src/expand_word.c 		\
-	src/expand_variable.c 	\
-	src/expand_command.c 	\
+	builtins/msh_cd.c				\
+	builtins/msh_pwd.c				\
+	builtins/msh_echo.c				\
+	builtins/msh_exit.c 			\
+	signal/msh_signal.c 			\
+	src/helper/ft_strcmp.c 			\
+	src/helper/symbol_matcher.c 	\
+	src/helper/prompt_validator.c	\
+	src/lexer/token_node_utils.c 	\
+	src/lexer/operator.c 			\
+	src/lexer/readline.c			\
+	src/lexer/tokenizer.c 			\
+	src/parser/redir_node_utils.c	\
+	src/parser/cmd_node_utils.c 	\
+	src/parser/parser.c 			\
+	src/parser/expand_word.c 		\
+	src/parser/expand_variable.c 	\
+	src/parser/expand_command.c 	\
 	src/environment_variable.c \
 	src/debug_functions.c		\
+	src/cleaner.c				\
 	src/minishell.c 
 
 

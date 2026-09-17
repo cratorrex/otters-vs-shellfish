@@ -87,6 +87,13 @@ typedef struct s_shell
 	int		exit_status;
 }	t_shell;
 
+typedef struct s_core
+{
+	t_token *tokens;
+	t_cmd *commands;
+	t_shell *shell;
+}	t_core;
+
 /* readline.c */
 char			*rl_gets(void);
 void			free_line_buffer(char **line_buffer);
@@ -142,5 +149,14 @@ int expand_command(t_cmd *cmd, t_shell *shell);
 void display_tokens(t_token *tokens);
 void	print_cmd_list(t_cmd *cmd);
 void print_env(char **envp, char *message);
+
+/* cleaner.c */
+void	clean_up_arr_str(char **arr);
+void	clean_up_redirs(t_redir *redirs);
+void	clean_up_cmd(t_cmd *cmd);
+
+/* prompt_validator.c */
+int is_empty_prompt(const char *line_read);
+int is_only_space(const char *line_read);
 
 #endif

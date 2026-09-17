@@ -1,5 +1,24 @@
 #include "minishell.h"
 
+static int is_valid_token_structure(t_token *current)
+{
+	if (current->type == TOKEN_PIPE)
+	{
+		if (!current->next)
+			return (0);
+		if (current->next->type == TOKEN_PIPE)
+			return (0);
+	}
+	if (is_redirection(current->type))
+	{
+		if (!current->next)
+			return (0);
+		if (current->next->type != TOKEN_WORD)
+			return (0);
+	}
+	return (1);
+}
+
 int validate_syntax(t_token *tokens)
 {
     t_token *current;
@@ -11,20 +30,8 @@ int validate_syntax(t_token *tokens)
         return (0);
     while (current)
     {
-        if (current->type == TOKEN_PIPE)
-        {
-            if (!current->next)
-                return (0);
-            if (current->next->type == TOKEN_PIPE)
-                return (0);
-        }
-        if (is_redirection(current->type))
-        {
-            if (!current->next)
-                return (0);
-            if (current->next->type != TOKEN_WORD)
-                return (0);
-        }
+        if (!is_valid_token_structure(current))
+			return (0);
         current = current->next;
     }
     return (1);
@@ -72,7 +79,6 @@ t_cmd *parse_token(t_token *tokens)
 			return (NULL);
 		if (!parse_command(&tokens, new_cmd))
 		{
-			/* free up memory here */
 			token_clear(&tokens);
 			free(new_cmd);
 			return (NULL);
