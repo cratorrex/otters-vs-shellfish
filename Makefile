@@ -10,7 +10,6 @@ LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 SRCS = \
-<<<<<<< HEAD
 	builtins/msh_cd.c				\
 	builtins/msh_pwd.c				\
 	builtins/msh_echo.c				\
@@ -32,27 +31,6 @@ SRCS = \
 	src/environment_variable.c \
 	src/debug_functions.c		\
 	src/cleaner.c				\
-=======
-	builtins/msh_cd.c		\
-	builtins/msh_pwd.c		\
-	builtins/msh_echo.c		\
-	builtins/msh_exit.c 	\
-	exec/msh_pipexec.c		\
-	exec/msh_pxheredoc.c	\
-	signal/msh_signal.c 	\
-	src/ft_strcmp.c 		\
-	src/symbol_matcher.c 	\
-	src/token_node_utils.c 	\
-	src/operator.c 			\
-	src/readline.c			\
-	src/tokenizer.c 		\
-	src/redir_node_utils.c	\
-	src/cmd_node_utils.c 	\
-	src/parser.c 			\
-	src/expand_word.c 		\
-	src/expand_variable.c 	\
-	src/expand_command.c 	\
->>>>>>> develop
 	src/minishell.c 
 
 

@@ -88,7 +88,6 @@ typedef struct s_shell
 	int		exit_status;
 }	t_shell;
 
-<<<<<<< HEAD
 typedef struct s_core
 {
 	t_token *tokens;
@@ -97,9 +96,6 @@ typedef struct s_core
 }	t_core;
 
 # include "msh_exec.h"
-=======
-# include "msh_exec.h"
->>>>>>> develop
 
 /* readline.c */
 char			*rl_gets(void);
