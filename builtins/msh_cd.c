@@ -34,7 +34,9 @@ int   chdir(const char *path)
 Exit cases:
 cd: too many arguments >> 1
 cd: {invalDIR}: No such file or directory >> 1
+cd: {invalDIR}: Not a directory >> 1
 cd: {invalDIR}: Permission denied >> 1 >> needs +x
+>  cd in current directory but lost permissions incl.
 
 niche case
 changing of $PWD does nothing (at all, it seems)
@@ -47,20 +49,23 @@ case no need to handle "-" (back)
 */
 int	msh_cd(int count, char **string)
 {
-	char	*co_pwd[2];
+	//char	*co_pwd[2];
 
 	if (count > 2)
 		return (printf("msh: cd: too many arguments\n"), 1);
-	if (count == 2)
+	if (count == 2 && *(string[1]) != 0)
 	{
-		if (mcd_check_fx_ok(string[1]))
+		if (mcd_check_fx_ok(string[1]) > 0)
 			return (1);
 		// co_pwd[0] = getenv("PWD");
 		// co_pwd[1] = getenv("OLDPWD");
 		if (chdir(string[1]) == 0)
 			return (0);
 		else
-			return (perror("msh_cd"), 1);
+			return (perror("msh: cd:"), 1);
 	}
-	return (0);
+	else //find home if only `cd` or `cd `
+	{
+		return (0);
+	}
 }

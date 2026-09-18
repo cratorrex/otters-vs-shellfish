@@ -11,6 +11,7 @@
 //#  define __USE_POSIX	//this is for the squiggles. ONLY USE FOR TESTING
 # include <signal.h>
 # include <errno.h>
+# include <fcntl.h>
 
 # include "msh_signal.h"
 # include "msh_builtins.h"
@@ -87,12 +88,18 @@ typedef struct s_shell
 	int		exit_status;
 }	t_shell;
 
+<<<<<<< HEAD
 typedef struct s_core
 {
 	t_token *tokens;
 	t_cmd *commands;
 	t_shell *shell;
 }	t_core;
+
+# include "msh_exec.h"
+=======
+# include "msh_exec.h"
+>>>>>>> develop
 
 /* readline.c */
 char			*rl_gets(void);
