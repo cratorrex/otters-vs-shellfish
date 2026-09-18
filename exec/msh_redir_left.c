@@ -18,41 +18,6 @@
 //all sent in is already bash-compliant, ie empty word vs NULL
 //\n is not accepted so that case is not handled
 //within heredoc '\n' is accepted, and unclosed quotes too
-/* int	mpx_traverse_left(t_cmd *pass, t_mpx_fd **store)
-{
-	int	err;
-	int	i;
-
-	i = 0;
-	err = 0;
-	while (pass != NULL)
-	{
-		while (pass->redirs != NULL)
-		{
-			if (pass->redirs->type == TOKEN_REDIR_IN && *store[i][0] >= 0)
-			{
-				if (*store[i][0] > 2)
-					close(*store[i][0]);
-				*store[i][0] = open(pass->redirs->target, O_RDONLY);
-				if (*store[i][0] < 0)
-					continue ;
-			}
-			else if (pass->redirs->type == TOKEN_HEREDOC)
-			{
-				if (*store[i][0] > 2)
-				{
-					close(*store[i][0]);
-					*store[i][0] = 0;
-				}
-				*store[i][0] = msh_pxheredoc(pass->redirs->target, 0);
-				//something something get_next_line
-			}
-			pass->redirs = pass->redirs->next;
-		}
-		pass = pass->next;
-	}
-	return (*store[i][0]);
-} */
 
 static int	mpx_ret_redirin(t_redir *redir, int *fd, int *err)
 {
@@ -72,6 +37,16 @@ static int	mpx_ret_redirin(t_redir *redir, int *fd, int *err)
 	return (0);
 }
 
+// int sto_store = dup(0);
+// dup2(*fd, 0);
+// close(*fd);
+//
+// char te[2] = "";
+// int re = read(0, te, 1);
+// while (re)
+// 	{printf("%s", te); re = read(0, te, 1);}
+// printf("%i\n", re);
+// dup2(sto_store, 0);
 static void	mpx_ret_redirhd(t_redir *redir, int *fd, int *err)
 {
 	int	tempfd;
@@ -91,20 +66,13 @@ static void	mpx_ret_redirhd(t_redir *redir, int *fd, int *err)
 			close(tempfd);
 		else
 			*fd = tempfd;
-
-		int sto_store = dup(0);
-		dup2(*fd, 0);
-		close(*fd);
-
-		char te[2] = "";
-		int re = read(0, te, 1);
-		while (re)
-			{printf("%s", te); re = read(0, te, 1);}
-		printf("%i\n", re);
-		dup2(sto_store, 0);
 	}
 }
 
+/*
+write(1, thing, size);
+write(pfd[1], thing, size);
+*/
 int	mpx_traverse_left(t_cmd *pass, t_mpx_fd **store)
 {
 	int	i;
@@ -129,5 +97,3 @@ int	mpx_traverse_left(t_cmd *pass, t_mpx_fd **store)
 	}
 	return (err);
 }
-
-//fix this for errors and 

@@ -18,6 +18,7 @@
 //
 //assumption: we are allowed to use the MACRO errno
 //pwd accepts any number of arguments, but disregards them...
+//as long as it can print, it will return 0
 int	msh_pwd(int count, char **string)
 {
 	char	buf[4096];
@@ -40,12 +41,3 @@ code the variant that takes in env and then prints out $PWD
 // match envp for $PWD and print it (using write)
 since PWD=[...], printf +4 
 */
-/* int	msh_pwd_envp(int count, char **string, char **envp)
-{
-	if (count && string && envp)
-	{
-		
-	}
-	return 0;
-}
- */

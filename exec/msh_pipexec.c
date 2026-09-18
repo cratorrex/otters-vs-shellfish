@@ -56,7 +56,7 @@ t_mpx_fd	*mpx_traverse_pipe(t_cmd *cmd)
 	return (store);
 }
 
-/* t_mpx_fd	* */int msh_pipexec(t_cmd *cmd)
+t_mpx_fd	*msh_pipexec(t_cmd *cmd)
 {
 	t_mpx_fd	*store;
 	//t_mpx_fd	*pipe;
@@ -65,15 +65,13 @@ t_mpx_fd	*mpx_traverse_pipe(t_cmd *cmd)
 	i = 0;
 	store = mpx_traverse_pipe(cmd);//whole array of pipeline
 	//stuff for one command:below
-	if (mpx_traverse_left(cmd, &store) > 0)
-		/*stop exec return error*/;
-	if (mpx_traverse_right(cmd, &store))
-	{
-		
-	}
+	//
+	if (mpx_traverse_left(cmd, &store) || mpx_traverse_right(cmd, &store))
+		return (NULL);
+		/*~~stop exec~~ return NULL, read from errno*/
 
 	//smthn smthn send to exec and then free
-	return (1);
+	return (store);
 }
 
 //the tedium is going to kill me...

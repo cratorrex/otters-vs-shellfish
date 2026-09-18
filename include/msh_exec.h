@@ -15,7 +15,7 @@
 #  define MSH_EXEC_H
 
 typedef int	t_mpx_fd[2];
-int	msh_pipexec(t_cmd *cmd);
+t_mpx_fd	*msh_pipexec(t_cmd *cmd);
 
 //if delim has quotes there should be a notice of it.
 //mode1 means we expand environment
