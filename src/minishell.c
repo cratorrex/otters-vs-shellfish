@@ -54,11 +54,17 @@ void handle_sigint(int sig)
     rl_redisplay();
 }
 
+// void process_shell(t_shell *shell)
+// {
+// 	// msh_exec
+// 	printf("%s");
+// }
+
 int main(int argc, char **av, char **envp)
 {
 	static char *rl_line_buffer;
 	t_token *tokens;
-	t_cmd *commands;
+	t_shell shell;
 	
 	tokens = NULL;
 	rl_line_buffer = NULL;
@@ -113,34 +119,60 @@ int main(int argc, char **av, char **envp)
 
 		//// PARSER
 		/* parsing token into command structure */
-		commands = parse_token(tokens);
-		if (!commands)
+		shell.commands = parse_token(tokens);
+		if (!shell.commands)
 		{
 			printf("commands is NULL\n");
 			exit(1);
 		}
 	
 		printf("Before expansion\n");
-		print_cmd_list(commands);
+		print_cmd_list(shell.commands);
 		/* preparing the command for expansion of variable and quote removal */
-		t_shell shell;
 
 		shell.envp = init_env_variable(envp);
 		shell.exit_status = 0;
 		
-		if (!expand_command(commands, &shell))
+		if (!expand_command(shell.commands, &shell))
 		{
 			free_line_buffer(&rl_line_buffer);
 			token_clear(&tokens);
-			clean_up_cmd(commands);
+			clean_up_cmd(shell.commands);
 			clean_up_arr_str(shell.envp);
 			exit(1);
 		}
 		printf("\n\nAfter expansion\n");
-		print_cmd_list(commands);
+		print_cmd_list(shell.commands);
+
+		// printf("Calling msh_exec()\n");
+		int pwd_status = msh_pwd(2, shell.envp);
+		printf("pwd_status = %d\n", pwd_status);
+
+
+		if (!shell.commands->av)
+			printf("shell.command is NULL\n");
+		else
+			printf("shell.command is NOT NULL\n");
+		int cd_status = msh_cd(2, shell.commands->av);
+		printf("cd_status = %d\n", cd_status);
+		printf("\n\n\n\n\n");
+
+		int env_status = msh_env(&shell);
+		printf("env_status = %d\n", env_status);
+		printf("\n\n\n\n\n");
+
+		int export_status = msh_export(&shell, "TEST1=hello");
+		printf("export_status = %d\n", export_status);
+		print_env(shell.envp);
+		printf("\n\n\n\n\n");
+
 
 
 		////
+
+		// Execution part
+		// process_shell(&shell);
+
 
 		/* Wrong, only clean when shell exited / env not configured */
 		if (ft_strncmp(rl_line_buffer, "clear", ft_strlen(rl_line_buffer)) == 0)
@@ -148,7 +180,7 @@ int main(int argc, char **av, char **envp)
 		
 		/* Clean up everything */
 		clean_up_arr_str(shell.envp);
-		clean_up_cmd(commands);
+		clean_up_cmd(shell.commands);
 		token_clear(&tokens);
 		free_line_buffer(&rl_line_buffer);
 	}

@@ -16,6 +16,10 @@
 
 int	msh_echo(int count, char **string);
 int	msh_pwd(int count, char **string);
+int	msh_cd(int count, char **string);
+int msh_export(t_shell *shell, char *var);
+int msh_env(t_shell *shell);
+int msh_unset(t_shell *shell, char *var);
 
 # endif
 #endif

@@ -57,10 +57,9 @@ void	print_cmd_list(t_cmd *cmd)
 	}
 }
 
-void print_env(char **env, char *message)
+void print_env(char **env)
 {
     int i = 0;
-    printf("%s\n", message);
     while (env[i])
     {
         printf("%s\n", env[i]);

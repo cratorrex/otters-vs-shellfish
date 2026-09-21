@@ -60,3 +60,13 @@ int cmd_add_args(char *value, t_cmd *cmd)
 	cmd->av = new_av;
 	return (1);
 }
+
+int cmd_size(t_cmd *cmd)
+{
+	int i;
+	
+	i = 0;
+	while (cmd->av[i])
+		i++;
+	return (i);
+}

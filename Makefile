@@ -14,6 +14,8 @@ SRCS = \
 	builtins/msh_pwd.c				\
 	builtins/msh_echo.c				\
 	builtins/msh_exit.c 			\
+	builtins/msh_export.c			\
+	builtins/msh_env.c				\
 	signal/msh_signal.c 			\
 	src/helper/ft_strcmp.c 			\
 	src/helper/symbol_matcher.c 	\

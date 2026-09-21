@@ -14,7 +14,6 @@
 # include <fcntl.h>
 
 # include "msh_signal.h"
-# include "msh_builtins.h"
 
 typedef enum e_quote_state
 {
@@ -85,17 +84,13 @@ typedef enum e_error_code
 typedef struct s_shell
 {
 	char	**envp;
+	t_cmd 	*commands;
 	int		exit_status;
+	int		should_exit;
 }	t_shell;
 
-typedef struct s_core
-{
-	t_token *tokens;
-	t_cmd *commands;
-	t_shell *shell;
-}	t_core;
-
-# include "msh_exec.h"
+#include "msh_exec.h"
+# include "msh_builtins.h"
 
 /* readline.c */
 char			*rl_gets(void);
@@ -151,7 +146,7 @@ int expand_command(t_cmd *cmd, t_shell *shell);
 /* debug_functions */
 void display_tokens(t_token *tokens);
 void	print_cmd_list(t_cmd *cmd);
-void print_env(char **envp, char *message);
+void print_env(char **env);
 
 /* cleaner.c */
 void	clean_up_arr_str(char **arr);
