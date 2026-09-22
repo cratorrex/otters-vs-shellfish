@@ -4,8 +4,8 @@ int msh_unset(t_shell *shell, char *var)
 {
     if (!shell)
         return (1);
-    shell->envp = remove_variable(shell->envp, var);
-    if (!shell->envp)
+    shell->env = remove_variable(shell->env, var);
+    if (!shell->env)
         return (1);
     return (0);
 }

@@ -14,6 +14,8 @@
 # ifndef MSH_BUILTINS_H
 #  define MSH_BUILTINS_H
 
+#include "minishell.h"
+
 int	msh_echo(int count, char **string);
 int	msh_pwd(int count, char **string);
 int	msh_cd(int count, char **string);

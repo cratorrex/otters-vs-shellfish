@@ -7,9 +7,9 @@ int msh_export(t_shell *shell, char *var)
     if (!shell || !var)
         return (1);
     key = ft_strchr(var, '=');
-    if (get_target_variable_index(shell->envp, key) != -1)
-        shell->envp = update_variable(shell->envp, var);
+    if (get_target_variable_index(shell->env, key) != -1)
+        shell->env = update_variable(shell->env, var);
     else
-        shell->envp = add_new_variable(shell->envp, var);
+        shell->env = add_new_variable(shell->env, var);
     return (0);
 }

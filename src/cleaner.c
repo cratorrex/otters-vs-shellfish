@@ -43,3 +43,11 @@ void	clean_up_cmd(t_cmd *cmd)
 		cmd = tmp;
 	}
 }
+
+void	clean_up_shell(t_shell *shell)
+{
+	if (!shell)
+		return ;
+	clean_up_arr_str(shell->env);
+	shell->env = NULL;
+}

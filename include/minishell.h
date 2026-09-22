@@ -83,8 +83,7 @@ typedef enum e_error_code
 
 typedef struct s_shell
 {
-	char	**envp;
-	t_cmd 	*commands;
+	char	**env;
 	int		exit_status;
 	int		should_exit;
 }	t_shell;
@@ -152,6 +151,7 @@ void print_env(char **env);
 void	clean_up_arr_str(char **arr);
 void	clean_up_redirs(t_redir *redirs);
 void	clean_up_cmd(t_cmd *cmd);
+void	clean_up_shell(t_shell *shell);
 
 /* prompt_validator.c */
 int is_empty_prompt(const char *line_read);

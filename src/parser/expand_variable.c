@@ -61,7 +61,7 @@ char	*expand_variable(char *str, int *i, t_shell *shell)
 	if (!name)
 		return (NULL);
 
-	value = get_env_value(name, shell->envp);
+	value = get_env_value(name, shell->env);
 	free(name);
 	return (value);
 }

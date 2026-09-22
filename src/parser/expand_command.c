@@ -68,7 +68,6 @@ static int expand_redirs(t_cmd *cmd, t_shell *shell)
 
 int expand_command(t_cmd *cmd, t_shell *shell)
 {
-    printf("Entering  here then failed\n");
     while (cmd)
     {
         if (!expand_argvs(cmd, shell))
