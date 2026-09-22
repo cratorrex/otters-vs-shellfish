@@ -53,6 +53,25 @@ static int	cd_tilde(t_shell *shell)
 	return (cd_change_dir(shell, home, 0));
 }
 
+static int mcd_check_fx_ok(char *dir)
+{
+	DIR	*directory;
+
+	if (access(dir, F_OK) == -1)
+		return (printf("msh: cd: %s: No such file or directory\n",
+				dir), 1);
+	directory = opendir(dir);
+	if (!directory)
+	{
+		if (access(dir, X_OK) == -1)
+			return (printf("msh: cd: %s: Permission denied\n", dir), 1);
+		else
+			return (printf("msh: cd: %s: Not a directory\n", dir), 1);
+	}
+	closedir(directory);
+	return (0);
+}
+
 int	msh_cd(t_shell *shell, char **av)
 {
 	int	count;
@@ -73,6 +92,8 @@ int	msh_cd(t_shell *shell, char **av)
 		return (cd_tilde(shell));
 	if (ft_strlen(av[1]) == 1 && av[1][0] == '-')
 		return (cd_oldpwd(shell));
+	if (mcd_check_fx_ok(av[1]))
+		return (1);
 	return (cd_change_dir(shell, av[1], 0));
 }
 
