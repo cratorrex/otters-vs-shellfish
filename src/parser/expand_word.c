@@ -101,10 +101,14 @@ char	*expand_word(char *str, t_shell *shell)
 	single_quote = 0;
 	double_quote = 0;
 
+	if (ft_strlen(str) == 1 && *str == '~')
+	{
+		result = get_env_value("HOME", shell->env);
+		return (result);
+	}
 	result = ft_strdup("");
 	if (!result)
 		return (NULL);
-
 	while (str[i])
 	{
 		if (handle_quote(str[i], &single_quote, &double_quote))
