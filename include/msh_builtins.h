@@ -19,13 +19,15 @@
 int	msh_echo(int count, char **string);
 int	msh_pwd(int count, char **string);
 int	msh_cd(t_shell *shell, char **av);
-int msh_export(t_shell *shell, char *var);
+int	msh_export(t_shell *shell, char **av);
 int msh_env(t_shell *shell);
 int msh_unset(t_shell *shell, char *var);
 
 int	cd_set_variable(t_shell *shell, char *key, char *value);
 int	cd_update_env(t_shell *shell, char *oldpwd, char *newpwd);
 int	cd_change_dir(t_shell *shell, char *path, int print_path);
+void free_env(char **env);
+int	print_export(char **env);
 
 # endif
 #endif

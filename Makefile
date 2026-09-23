@@ -18,6 +18,7 @@ SRCS = \
 	builtins/msh_env.c				\
 	builtins/msh_unset.c 			\
 	builtins/msh_cd_helper.c 		\
+	builtins/msh_export_helper.c 	\
 	exec/msh_pipexec.c				\
 	exec/msh_redir_left.c			\
 	exec/msh_redir_right.c			\
