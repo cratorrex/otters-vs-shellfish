@@ -25,11 +25,11 @@ int	mexec_isbuiltin(t_mpx_fd *store, int bi, t_cmd *cmd, t_shell *shell)
 	if (is_builtin_cmd(cmd->av[0]) == EXIT)
 		return (msh_exit());
 	if (is_builtin_cmd(cmd->av[0]) == ENV)
-		return (msh_env());
+		return (msh_env(shell));
 	if (is_builtin_cmd(cmd->av[0]) == UNSET)
-		return (msh_unset());
+		return (msh_unset(shell, cmd->av)); //sends argv
 	if (is_builtin_cmd(cmd->av[0]) == EXPORT)
-		return (msh_export());
+		return (msh_export(shell, cmd->av)); //sends argv
 	if (is_builtin_cmd(cmd->av[0]) == PWD)
 		return (msh_pwd());
 	if (is_builtin_cmd(cmd->av[0]) == CD)
@@ -47,7 +47,7 @@ int	msh_exec_one(t_cmd *cmd, t_shell *shell)
 	mpx_traverse_right(cmd, &fd);
 	//no fork if builtin
 
-	if (is_builtin_cmd(cmd->av[0]))
+	if (is_builtin_cmd(cmd->av[0]));
 }
 
 int	msh_exec(t_cmd *cmd, t_shell *shell)
@@ -65,6 +65,12 @@ int	msh_exec(t_cmd *cmd, t_shell *shell)
 	{
 		if (is_builtin_cmd(cmd->av[0]) != UNKNOWN_CMD)
 			mexec_isbuiltin();
+		else if (ft_strchr(cmd->av[0], '/') != NULL) //relative cmd to exec
+			execve(cmd->av[0], cmd->av, shell->env); //should come later
+		else if (mexec_find_path() != NULL)
+			; //do something
+		else
+			return (127); //{SHELL}: command not found: {CMD}
 		//idk fork it
 		if (pid < 0)
 			cry();//update last to indicate error
