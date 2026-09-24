@@ -2,21 +2,21 @@
 
 t_builtin_cmd is_builtin_cmd(char *cmd)
 {
-    int is_match;
+    //int is_match;
     
-    if (ft_strcmp(cmd, "echo") == 0)
+    if (ft_strncmp(cmd, "echo", 5) == 0)
         return (ECHO);
-    if (ft_strcmp(cmd, "cd") == 0)
+    if (ft_strncmp(cmd, "cd", 3) == 0)
         return (CD);
-    if (ft_strcmp(cmd, "pwd") == 0)
+    if (ft_strncmp(cmd, "pwd", 4) == 0)
         return (PWD);
-    if (ft_strcmp(cmd, "export") == 0)
+    if (ft_strncmp(cmd, "export", 7) == 0)
         return (EXPORT);
-    if (ft_strcmp(cmd, "unset") == 0)
+    if (ft_strncmp(cmd, "unset", 6) == 0)
         return (UNSET);
-    if (ft_strcmp(cmd, "env") == 0)
+    if (ft_strncmp(cmd, "env", 4) == 0)
         return (ENV);
-    if (ft_strcmp(cmd, "exit") == 0)
+    if (ft_strncmp(cmd, "exit", 5) == 0)
         return (EXIT);
     return (UNKNOWN_CMD);
 }

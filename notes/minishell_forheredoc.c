@@ -54,194 +54,231 @@ void handle_sigint(int sig)
     rl_redisplay();
 }
 
-/*display token for debugging, clean up later*/
-void display_tokens(t_token *tokens)
+int	init_shell(t_shell *shell, char **envp)
 {
-	int index = 0;
-	while (tokens)
+	if (!shell || !envp)
+		return (0);
+	shell->env = init_env_variable(envp);
+	if (!shell->env)
+		return (0);
+	shell->exit_status = 0;
+	shell->should_exit = 0;
+	return (1);
+}
+
+static int	process_line(t_shell *shell, char *line)
+{
+	t_token	*tokens;
+	t_cmd		*cmd;
+
+	tokens = tokenizer(line);
+	if (!tokens)
 	{
-		index++;
-		printf("token %d value = %s | type = %d\n", index, tokens->value, tokens->type);
-		tokens = tokens->next;
-	}
-}
-
-void	print_cmd_list(t_cmd *cmd)
-{
-	int		i;
-	int		cmd_index;
-	t_redir	*redir;
-
-	cmd_index = 0;
-	while (cmd)
-	{
-		printf("\n========== CMD %d ==========\n", cmd_index);
-
-		printf("Arguments:\n");
-		if (!cmd->av)
-			printf("  (none)\n");
-		else
-		{
-			i = 0;
-			while (cmd->av[i])
-			{
-				printf("  av[%d] = \"%s\"\n", i, cmd->av[i]);
-				i++;
-			}
-		}
-
-		printf("Redirections:\n");
-		if (!cmd->redirs)
-			printf("  (none)\n");
-		else
-		{
-			redir = cmd->redirs;
-			while (redir)
-			{
-				printf("  type = %d, target = \"%s\"\n",
-					redir->type, redir->target);
-				redir = redir->next;
-			}
-		}
-
-		printf("============================\n");
-
-		cmd = cmd->next;
-		cmd_index++;
-	}
-}
-
-// void executor_dummy(t_cmd *commands, t_shell *shell)
-// {
-	
-// }
-
-int is_empty_prompt(const char *line_read)
-{
-	return (ft_strlen(line_read) == 0);
-}
-
-int is_only_space(const char *line_read)
-{
-	int i;
-	int len;
-
-	i = 0;
-	while (line_read[i] && line_read[i] == ' ')
-		i++;
-	len = ft_strlen(line_read);
-	if (len == i)
-		return (1);
-	return (0);
-}
-
-int main(int argc, char **av, char **envp)
-{
-	if (argc != 1 && !*av)
-	{
-		printf("Usage: ./minishell\n");
+		shell->exit_status = 2;
 		return (1);
 	}
-	static char *rl_line_buffer;
-	t_token *tokens;
-
-	tokens = NULL;
-	signal(SIGINT, handle_sigint);
-	rl_line_buffer = NULL;
-	while (1)
+	if (!validate_syntax(tokens))
 	{
-		rl_line_buffer = rl_gets();
+		printf("syntax error\n");
+		shell->exit_status = 2;
+		token_clear(&tokens);
+		return (1);
+	}
+	cmd = parse_token(tokens);
+	if (!cmd)
+	{
+		token_clear(&tokens);
+		return (0);
+	}
+	if (!expand_command(cmd, shell))
+	{
+		clean_up_cmd(cmd);
+		token_clear(&tokens);
+		return (0);
+	}
+	print_cmd_list(cmd);
+	msh_exec_one(cmd, shell);
+	// execute_commands(cmd, shell);
+	clean_up_cmd(cmd);
+	token_clear(&tokens);
+	return (1);
+}
 
-		//// Clean up later
-		/* handle signal CTRL + D */
-		if (!rl_line_buffer)
+void	shell_loop(t_shell *shell)
+{
+	char	*line;
+
+	while (!shell->should_exit)
+	{
+		line = rl_gets();
+		if (!line)
 		{
 			printf("exit\n");
 			break ;
 		}
-		/* handle empty prompt & prompt that contains only spaces */
-		if (is_empty_prompt(rl_line_buffer) || is_only_space(rl_line_buffer))
+		if (is_empty_prompt(line) || is_only_space(line))
 		{
-			free_line_buffer(&rl_line_buffer);
+			free_line_buffer(&line);
 			continue ;
 		}
-		////
-
-
-		
-		//// TOKENIZER
-		/* tokenize word from rl_line_buffer based on token type */
-		tokens = tokenizer(rl_line_buffer);
-		if (!validate_syntax(tokens))
+		if (!process_line(shell, line))
 		{
-			printf("syntax error\n");
-			free_line_buffer(&rl_line_buffer);
-			token_clear(&tokens);
-			/* return back exit code */
-			continue ;
+			free_line_buffer(&line);
+			shell->exit_status = 1;
+			break ;
 		}
-		if (!envp)
-		{
-			printf("environment path not found\n");
-			free_line_buffer(&rl_line_buffer);
-			token_clear(&tokens);
-			exit(1);
-		}
-		////
-
-
-		//// PARSER
-		/* parsing token into command structure */
-		t_cmd *commands = parse_token(tokens);
-		if (!commands)
-			printf("commands is NULL\n");
-		else
-		{
-			printf("Before expansion\n");
-			print_cmd_list(commands);
-		}
-		/* preparing the command for expansion of variable and quote removal */
-		t_shell shell;
-
-		shell.envp = envp;
-		shell.exit_status = 0;
-		
-		if (!expand_command(commands, &shell))
-		{
-			free_line_buffer(&rl_line_buffer);
-			token_clear(&tokens);
-			/* clean up command structure */
-			exit(1);
-		}
-
-		printf("\n\nAfter expansion\n");
-		print_cmd_list(commands);
-
-		t_mpx_fd *mpx_fds = mpx_traverse_pipe(commands);
-		int maxima = mpx_traverse_left(commands, &mpx_fds);
-		if (!maxima)
-		{
-			printf("Entering here\n");
-		}
-		//close (maxima);
-		maxima = mpx_traverse_right(commands, &mpx_fds);
-		if (!maxima)
-		{
-			printf("Entering here\n");
-		}
-		token_clear(&tokens);
-		////
-
-		/* Wrong, only clean when shell exited / env not configured */
-		if (ft_strncmp(rl_line_buffer, "clear", ft_strlen(rl_line_buffer)) == 0)
-			rl_clear_history();
-		/* if no longer used, clean up line buffer */
-		free_line_buffer(&rl_line_buffer);
+		free_line_buffer(&line);
 	}
-
-	rl_clear_history();
-	
-	exit(0);
 }
 
+int	main(int argc, char **av, char **envp)
+{
+	t_shell	shell;
 
+	(void)av;
+	if (argc != 1)
+	{
+		printf("Usage: ./minishell\n");
+		return (1);
+	}
+	if (!init_shell(&shell, envp))
+	{
+		printf("minishell: failed to initialize shell\n");
+		return (1);
+	}
+	signal(SIGINT, handle_sigint);
+	shell_loop(&shell);
+	clear_history();
+	clean_up_shell(&shell);
+	return (shell.exit_status);
+}
+
+// int main(int argc, char **av, char **envp)
+// {
+// 	static char *rl_line_buffer;
+// 	t_token *tokens;
+// 	t_shell shell;
+	
+// 	tokens = NULL;
+// 	rl_line_buffer = NULL;
+// 	if (argc != 1 && !*av)
+// 	{
+// 		printf("Usage: ./minishell\n");
+// 		return (1);
+// 	}
+// 	if (!envp)
+// 	{
+// 		printf("Error: default environement path does not exist\n");
+// 		return (1);
+// 	}
+// 	signal(SIGINT, handle_sigint);
+// 	while (1)
+// 	{
+// 		rl_line_buffer = rl_gets();
+
+// 		//// Clean up later
+// 		/* handle signal CTRL + D */
+// 		if (!rl_line_buffer)
+// 		{
+// 			printf("exit\n");
+// 			break ;
+// 		}
+// 		/* handle empty prompt & prompt that contains only spaces */
+// 		if (is_empty_prompt(rl_line_buffer) || is_only_space(rl_line_buffer))
+// 		{
+// 			free_line_buffer(&rl_line_buffer);
+// 			continue ;
+// 		}
+// 		////
+	
+// 		//// TOKENIZER
+// 		/* tokenize word from rl_line_buffer based on token type */
+// 		tokens = tokenizer(rl_line_buffer);
+// 		if (!tokens)
+// 		{
+// 			free_line_buffer(&rl_line_buffer);
+// 			exit(1);
+// 		}
+// 		if (!validate_syntax(tokens))
+// 		{
+// 			printf("syntax error\n");
+// 			free_line_buffer(&rl_line_buffer);
+// 			token_clear(&tokens);
+// 			/* return back exit code */
+// 			continue ;
+// 		}
+// 		////
+
+
+// 		//// PARSER
+// 		/* parsing token into command structure */
+// 		shell.commands = parse_token(tokens);
+// 		if (!shell.commands)
+// 		{
+// 			printf("commands is NULL\n");
+// 			exit(1);
+// 		}
+	
+// 		printf("Before expansion\n");
+// 		print_cmd_list(shell.commands);
+// 		/* preparing the command for expansion of variable and quote removal */
+
+// 		shell.envp = init_env_variable(envp);
+// 		shell.exit_status = 0;
+		
+// 		if (!expand_command(shell.commands, &shell))
+// 		{
+// 			free_line_buffer(&rl_line_buffer);
+// 			token_clear(&tokens);
+// 			clean_up_cmd(shell.commands);
+// 			clean_up_arr_str(shell.envp);
+// 			exit(1);
+// 		}
+// 		printf("\n\nAfter expansion\n");
+// 		print_cmd_list(shell.commands);
+
+// 		// printf("Calling msh_exec()\n");
+// 		int pwd_status = msh_pwd(2, shell.envp);
+// 		printf("pwd_status = %d\n", pwd_status);
+
+
+// 		int cd_status = msh_cd(2, shell.commands->av);
+// 		printf("cd_status = %d\n", cd_status);
+// 		printf("\n\n\n\n\n");
+
+// 		int env_status = msh_env(&shell);
+// 		printf("env_status = %d\n", env_status);
+// 		printf("\n\n\n\n\n");
+
+// 		int export_status = msh_export(&shell, "TEST1=hello");
+// 		printf("export_status = %d\n", export_status);
+
+// 		int unset_status = msh_unset(&shell, "TEST");
+// 		print_env(shell.envp);
+// 		printf("unset_status = %d\n", unset_status);
+		
+// 		printf("\n\n\n\n\n");
+
+
+
+// 		////
+
+// 		// Execution part
+// 		// process_shell(&shell);
+
+
+// 		/* Wrong, only clean when shell exited / env not configured */
+// 		if (ft_strncmp(rl_line_buffer, "clear", ft_strlen(rl_line_buffer)) == 0)
+// 			rl_clear_history();
+		
+// 		/* Clean up everything */
+// 		clean_up_arr_str(shell.envp);
+// 		clean_up_cmd(shell.commands);
+// 		token_clear(&tokens);
+// 		free_line_buffer(&rl_line_buffer);
+// 	}
+
+// 	rl_clear_history();
+	
+// 	exit(0);
+// }

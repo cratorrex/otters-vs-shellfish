@@ -16,6 +16,11 @@
 
 typedef int	t_mpx_fd[2];
 t_mpx_fd	*msh_pipexec(t_cmd *cmd);
+int	msh_exec_one(t_cmd *cmd, t_shell *shell);
+int	mexec_find_path(char **found, char *path, char *cmd0);
+
+
+t_builtin_cmd is_builtin_cmd(char *cmd);
 
 //if delim has quotes there should be a notice of it.
 //mode1 means we expand environment

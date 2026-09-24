@@ -14,48 +14,54 @@
 
 //env assumes a created env struct
 //? what do here idrky,bws
-int	mexec_fork()
+/* int	mexec_fork()
 {
 	
 }
-
+ */
 /*thing*/
-int	mexec_isbuiltin(t_mpx_fd *store, int bi, t_cmd *cmd, t_shell *shell)
+int	mexec_isbuiltin(/* t_mpx_fd *store, */ t_cmd *cmd, t_shell *shell)
 {
-	if (is_builtin_cmd(cmd->av[0]) == EXIT)
-		return (msh_exit());
+	// if (is_builtin_cmd(cmd->av[0]) == EXIT)
+	// 	return (msh_exit());
 	if (is_builtin_cmd(cmd->av[0]) == ENV)
 		return (msh_env(shell));
-	if (is_builtin_cmd(cmd->av[0]) == UNSET)
-		return (msh_unset(shell, cmd->av)); //sends argv
+	// if (is_builtin_cmd(cmd->av[0]) == UNSET)
+	// 	return (msh_unset(shell, cmd->av)); //sends argv
 	if (is_builtin_cmd(cmd->av[0]) == EXPORT)
 		return (msh_export(shell, cmd->av)); //sends argv
-	if (is_builtin_cmd(cmd->av[0]) == PWD)
-		return (msh_pwd());
+	// if (is_builtin_cmd(cmd->av[0]) == PWD)
+	// 	return (msh_pwd(1, cmd->av)); //placeholder 1 av
 	if (is_builtin_cmd(cmd->av[0]) == CD)
 		return (msh_cd(shell, cmd->av));
-	if (is_builtin_cmd(cmd->av[0]) == ECHO)
-		return (msh_echo());
+	// if (is_builtin_cmd(cmd->av[0]) == ECHO)
+		// return (msh_echo(1, cmd->av)); //placeholder 1 av
+	else return 0;
 }
 
 //this is a stack fd[2] rn... but can be made into a heap fd[2]
 int	msh_exec_one(t_cmd *cmd, t_shell *shell)
 {
-	t_mpx_fd	fd;
+	// t_mpx_fd	fd;
 
-	mpx_traverse_left(cmd, &fd);
-	mpx_traverse_right(cmd, &fd);
+	// mpx_traverse_left(cmd, &fd);
+	// mpx_traverse_right(cmd, &fd);
 	//no fork if builtin
 
-	if (is_builtin_cmd(cmd->av[0]));
+	if (is_builtin_cmd(cmd->av[0]) != UNKNOWN_CMD)
+	{
+		mexec_isbuiltin(cmd, shell);
+	}
+	return (0);
 }
 
 int	msh_exec(t_cmd *cmd, t_shell *shell)
 {
 	//t_mpx_fd	*pipe;//malloc and pipe // this is alr done... oml
 	t_mpx_fd	*store;//[0] in [1] out
-	pid_t	pid;
+	//pid_t	pid;
 	int	i;
+	//char **find;
 
 	if (!cmd->next) //basic command, no pipes
 		return (msh_exec_one(cmd, shell));
@@ -64,15 +70,15 @@ int	msh_exec(t_cmd *cmd, t_shell *shell)
 	while (cmd)
 	{
 		if (is_builtin_cmd(cmd->av[0]) != UNKNOWN_CMD)
-			mexec_isbuiltin();
+			mexec_isbuiltin(/* store, */ cmd, shell);
 		else if (ft_strchr(cmd->av[0], '/') != NULL) //relative cmd to exec
 			execve(cmd->av[0], cmd->av, shell->env); //should come later
-		else if (mexec_find_path() != NULL)
-			; //do something
+		//else if (mexec_find_path() != NULL)
+		//	; //do something
 		else
 			return (127); //{SHELL}: command not found: {CMD}
 		//idk fork it
-		if (pid < 0)
+/* 		if (pid < 0)
 			cry();//update last to indicate error
 		else if (!pid)
 		{
@@ -83,5 +89,7 @@ int	msh_exec(t_cmd *cmd, t_shell *shell)
 			pid = sumshit;
 		//rmb fork errors
 		return (child_wait());
+ */	
 	}
+	return (0);
 }
