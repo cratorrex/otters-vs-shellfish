@@ -24,6 +24,8 @@ static int	isvalid_export_arg(char *arg)
 
 	if (!arg)
 		return (0);
+	if(!ft_strchr(arg, '='))
+		return (0);
 	key = get_env_key(arg);
 	if (!key)
 		return (0);
