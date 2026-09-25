@@ -12,26 +12,18 @@
 
 #include "minishell.h"
 
-//literally just prints out the current working directory
-//ERROR: If the buffer is not big enough (imagine...)
-//ENOENT
-//
-//assumption: we are allowed to use the MACRO errno
-//pwd accepts any number of arguments, but disregards them...
-//as long as it can print, it will return 0
-int	msh_pwd(int count, char **string)
+int	msh_pwd(void)
 {
-	char	buf[4096];
+	char	*cwd;
 
-	if (count && string)
+	cwd = getcwd(NULL, 0);
+	if (!cwd)
 	{
-		if (getcwd(buf, sizeof(buf)) == NULL)
-		{
-			perror("pwd");
-			return (errno);
-		}
-		printf("%s\n", buf);
+		perror("msh: pwd");
+		return (1);
 	}
+	ft_putendl_fd(cwd, 1);
+	free(cwd);
 	return (0);
 }
 
