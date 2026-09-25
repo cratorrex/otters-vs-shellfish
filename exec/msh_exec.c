@@ -34,8 +34,8 @@ int	mexec_isbuiltin(/* t_mpx_fd *store, */ t_cmd *cmd, t_shell *shell)
 	// 	return (msh_pwd(1, cmd->av)); //placeholder 1 av
 	if (is_builtin_cmd(cmd->av[0]) == CD)
 		return (msh_cd(shell, cmd->av));
-	// if (is_builtin_cmd(cmd->av[0]) == ECHO)
-		// return (msh_echo(1, cmd->av)); //placeholder 1 av
+	if (is_builtin_cmd(cmd->av[0]) == ECHO)
+		return (msh_echo(shell, (cmd->av) + 1)); //placeholder 1 av
 	else return 0;
 }
 

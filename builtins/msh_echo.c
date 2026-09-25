@@ -32,6 +32,18 @@ will be treated as "\n"
 Bash version following 5.1.16 on the school's computer.
 */
 
+//seems like count is needed in some capacity,
+//inb4 overrunning into unread territory
+static int	mecho_lenstr(char **str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
+
 //if print success return (aka exit) 0
 //option "-n"
 static int	mecho_ncheck(char *string)
@@ -64,35 +76,37 @@ static void	mecho_print(char *string)
 {
 	while (string)
 	{
-		if (*string == 0)
+		if (string == NULL || !*string)
 			break ;
 		write(1, string, 1);
 		string ++;
 	}
 }
 
-int	msh_echo(int count, char **string)
+int	msh_echo(t_shell *shell, char **string)
 {
 	int	nflag;
+	int	count;
 
+	count = mecho_lenstr(string);
 	nflag = mecho_ncheck(string[0]);
-	if (string && count > 0)
+	if (string)
 	{
 		if (nflag == 1)
-		{
 			string ++;
-			count --;
-		}
-		while (count > 0)
+		while (string && count > 0)
 		{
 			mecho_print(*string);
 			string ++;
 			count --;
 			if (count > 0)
 				write(1, " ", 1);
+			else
+				break ;
 		}
 	}
 	if (nflag == 0)
 		write(1, "\n", 1);
+	shell->exit_status = 0;
 	return (0);
 }
