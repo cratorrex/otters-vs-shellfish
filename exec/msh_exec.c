@@ -20,32 +20,33 @@
 }
  */
 /*thing*/
-int	mexec_isbuiltin(/* t_mpx_fd *store, */ t_cmd *cmd, t_shell *shell)
+int	mexec_isbuiltin(t_cmd *cmd, t_shell *shell)
 {
-	// if (is_builtin_cmd(cmd->av[0]) == EXIT)
-	// 	return (msh_exit());
+	if (is_builtin_cmd(cmd->av[0]) == EXIT)
+		return (msh_exit(shell, cmd->av));
 	if (is_builtin_cmd(cmd->av[0]) == ENV)
-		return (msh_env(shell));
-	// if (is_builtin_cmd(cmd->av[0]) == UNSET)
-	// 	return (msh_unset(shell, cmd->av)); //sends argv
+		return (msh_env(shell, cmd->av));
+	if (is_builtin_cmd(cmd->av[0]) == UNSET)
+		return (msh_unset(shell, cmd->av)); //sends argv
 	if (is_builtin_cmd(cmd->av[0]) == EXPORT)
 		return (msh_export(shell, cmd->av)); //sends argv
-	// if (is_builtin_cmd(cmd->av[0]) == PWD)
-	// 	return (msh_pwd(1, cmd->av)); //placeholder 1 av
+	if (is_builtin_cmd(cmd->av[0]) == PWD)
+		return (msh_pwd()); //placeholder 1 av
 	if (is_builtin_cmd(cmd->av[0]) == CD)
 		return (msh_cd(shell, cmd->av));
 	if (is_builtin_cmd(cmd->av[0]) == ECHO)
-		return (msh_echo(shell, (cmd->av) + 1)); //placeholder 1 av
+		return (msh_echo(shell, cmd->av));
 	else return 0;
 }
 
 //this is a stack fd[2] rn... but can be made into a heap fd[2]
 int	msh_exec_one(t_cmd *cmd, t_shell *shell)
 {
-	// t_mpx_fd	fd;
+	// t_mpx_fd	*fd;
+	// t_mpx_fd	dup_io;
 
-	// mpx_traverse_left(cmd, &fd);
-	// mpx_traverse_right(cmd, &fd);
+	// mpx_traverse_left(cmd, fd);
+	// mpx_traverse_right(cmd, fd);
 	//no fork if builtin
 
 	if (is_builtin_cmd(cmd->av[0]) != UNKNOWN_CMD)

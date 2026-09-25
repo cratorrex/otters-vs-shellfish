@@ -89,7 +89,7 @@ int	msh_echo(t_shell *shell, char **string)
 	int	count;
 
 	count = mecho_lenstr(string);
-	nflag = mecho_ncheck(string[0], &count);
+	nflag = mecho_ncheck(string[1], &count);
 	if (string)
 	{
 		if (nflag == 1)
