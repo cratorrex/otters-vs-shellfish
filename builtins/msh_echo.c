@@ -46,7 +46,7 @@ static int	mecho_lenstr(char **str)
 
 //if print success return (aka exit) 0
 //option "-n"
-static int	mecho_ncheck(char *string)
+static int	mecho_ncheck(char *string, int *count)
 {
 	if (string)
 	{
@@ -61,7 +61,7 @@ static int	mecho_ncheck(char *string)
 					if (*string == 'n')
 						string ++;
 					else if (*string == 0)
-						return (1);
+						return (-- (*count), 1);
 					else
 						break ;
 				}
@@ -89,7 +89,7 @@ int	msh_echo(t_shell *shell, char **string)
 	int	count;
 
 	count = mecho_lenstr(string);
-	nflag = mecho_ncheck(string[0]);
+	nflag = mecho_ncheck(string[0], &count);
 	if (string)
 	{
 		if (nflag == 1)
