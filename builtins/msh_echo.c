@@ -70,18 +70,6 @@ static int	mecho_ncheck(char *string, int *count)
 	return (0);
 }
 
-//print literal as all tokens have been parsed.
-// static void	mecho_print(char *string)
-// {
-// 	while (string)
-// 	{
-// 		if (string == NULL || !*string)
-// 			break ;
-// 		write(1, string, 1);
-// 		string ++;
-// 	}
-// }
-
 int	msh_echo(t_shell *shell, char **string, int i)
 {
 	int	nflag;
