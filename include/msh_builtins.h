@@ -22,7 +22,7 @@ int	msh_cd(t_shell *shell, char **av);
 int	msh_export(t_shell *shell, char **av);
 int	msh_env(t_shell *shell, char **av);
 int msh_unset(t_shell *shell, char **av);
-int msh_exit(t_shell *shell, char **av);
+long msh_exit(t_shell *shell, char **av);
 
 int	cd_set_variable(t_shell *shell, char *key, char *value);
 int	cd_update_env(t_shell *shell, char *oldpwd, char *newpwd);

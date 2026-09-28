@@ -25,6 +25,7 @@ SRCS = \
 	exec/msh_pxheredoc.c			\
 	signal/msh_signal.c 			\
 	src/helper/ft_strcmp.c 			\
+	src/helper/ft_atol.c 			\
 	src/helper/symbol_matcher.c 	\
 	src/helper/prompt_validator.c	\
 	src/lexer/token_node_utils.c 	\

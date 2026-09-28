@@ -12,33 +12,6 @@
 
 #include "minishell.h"
 
-//if ^D and exit {?num}
-long	ft_atol(const char *str)
-{
-	long	sign;
-	long	sum;
-	int		i;
-
-	sum = 0;
-	sign = 1;
-	i = 0;
-	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
-		i++;
-	while (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
-			sign *= -1;
-		i++;
-		break ;
-	}
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		sum = sum * 10 + (str[i] - '0');
-		i++;
-	}
-	return (sum * sign);
-}
-
 static int	get_argc(char **av)
 {
 	int	i;
@@ -49,21 +22,29 @@ static int	get_argc(char **av)
 	return (i);
 }
 
-int contains_numeric_only(char *num)
+static int isvalid_exit_arg(char *arg)
 {
     int i;
 
-    i = 0;
-    while (num[i])
-    {
-        if (!(num[i] >= '0' && num[i] <= '9'))
-            return (0);
-        i++;
-    }
-    return (1);
+	i = 0;
+	while (arg[i] == ' ' || (arg[i] >= 9 && arg[i] <= 13))
+		i++;
+	if (arg[i] == '-' || arg[i] == '+')
+		i++;
+	while (arg[i])
+	{
+		if (!(arg[i] >= '0' && arg[i] <= '9'))
+			return (0);
+		i++;
+	}
+	return (1);
 }
 
-int	msh_exit(t_shell *shell, char **av)
+
+/* Note: return value is the shell exit status, handle later
+	CTRL^D should call this function
+*/
+long	msh_exit(t_shell *shell, char **av)
 {
 	int		argc;
 	long	status;
@@ -75,7 +56,7 @@ int	msh_exit(t_shell *shell, char **av)
 		shell->should_exit = 1;
 		return (shell->exit_status);
 	}
-	if (!contains_numeric_only(av[1]))
+	if (!isvalid_exit_arg(av[1]))
 	{
 		printf("msh: exit: %s: numeric argument required\n", av[1]);
 		shell->should_exit = 1;
@@ -88,5 +69,5 @@ int	msh_exit(t_shell *shell, char **av)
 	}
 	status = ft_atol(av[1]);
 	shell->should_exit = 1;
-	return ((unsigned char)status);
+	return ((unsigned char) status);
 }

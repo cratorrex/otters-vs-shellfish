@@ -159,4 +159,6 @@ void	clean_up_shell(t_shell *shell);
 int is_empty_prompt(const char *line_read);
 int is_only_space(const char *line_read);
 
+long	ft_atol(const char *str);
+
 #endif
