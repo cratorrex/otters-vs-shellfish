@@ -48,65 +48,64 @@ static int	mecho_lenstr(char **str)
 //option "-n"
 static int	mecho_ncheck(char *string, int *count)
 {
-	if (string)
+	int	i;
+
+	i = 0;
+	if (string && string[i])
 	{
-		if (*string == '-')
+		if (string[i] == '-')
 		{
-			string ++;
-			if (*string == 'n')
+			i ++;
+			while (string[i])
 			{
-				string ++;
-				while (string)
-				{
-					if (*string == 'n')
-						string ++;
-					else if (*string == 0)
-						return (-- (*count), 1);
-					else
-						break ;
-				}
+				if (string[i] == 'n')
+					i ++;
+				else
+					break ;
 			}
+			if (string[i] == 0)
+				return (-- (*count), 1);
 		}
 	}
 	return (0);
 }
 
 //print literal as all tokens have been parsed.
-static void	mecho_print(char *string)
-{
-	while (string)
-	{
-		if (string == NULL || !*string)
-			break ;
-		write(1, string, 1);
-		string ++;
-	}
-}
+// static void	mecho_print(char *string)
+// {
+// 	while (string)
+// 	{
+// 		if (string == NULL || !*string)
+// 			break ;
+// 		write(1, string, 1);
+// 		string ++;
+// 	}
+// }
 
-int	msh_echo(t_shell *shell, char **string)
+int	msh_echo(t_shell *shell, char **string, int i)
 {
 	int	nflag;
 	int	count;
 
-	count = mecho_lenstr(string);
-	nflag = mecho_ncheck(string[1], &count);
-	if (string)
+	count = mecho_lenstr(string) - 1;
+	nflag = mecho_ncheck(string[i], &count);
+	if (count > 0 && string[i])
 	{
 		if (nflag == 1)
-			string ++;
-		while (string && count > 0)
+			i ++;
+		while (string[i] && count > 0)
 		{
-			mecho_print(*string);
-			string ++;
+			printf("%s", string[i]);
+			i ++;
 			count --;
 			if (count > 0)
-				write(1, " ", 1);
+				printf(" ");
 			else
 				break ;
 		}
 	}
 	if (nflag == 0)
-		write(1, "\n", 1);
+		printf("\n");
 	shell->exit_status = 0;
 	return (0);
 }

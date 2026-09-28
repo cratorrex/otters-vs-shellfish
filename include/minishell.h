@@ -12,7 +12,7 @@
 # include <signal.h>
 # include <errno.h>
 # include <fcntl.h>
-#include <dirent.h>
+# include <dirent.h>
 
 # include "msh_signal.h"
 
@@ -50,9 +50,9 @@ typedef struct s_token
 
 typedef struct s_redir
 {
-	t_token_type type;
-	char *target;
-	struct s_redir *next;
+	t_token_type	type;
+	char			*target;
+	struct s_redir	*next;
 }	t_redir;
 
 typedef struct s_cmd
@@ -89,19 +89,18 @@ typedef struct s_shell
 	int		should_exit;
 }	t_shell;
 
-#include "msh_exec.h"
+# include "msh_exec.h"
 # include "msh_builtins.h"
 
 /* readline.c */
 char			*rl_gets(void);
 void			free_line_buffer(char **line_buffer);
 
-
 /* symbol_matcher */
 int				isfound_space(char *line);
 int				is_delimiter(char c);
 int				is_operator(char c);
-int is_redirection(t_token_type token_type);
+int				is_redirection(t_token_type token_type);
 
 /* token_node_utils.c */
 t_token			*token_new(char *value, t_token_type type);
@@ -109,14 +108,13 @@ void			token_add_back(t_token **lst, t_token *new);
 void			token_clear(t_token **lst);
 
 /* redir_node_utils.c */
-t_redir *redir_new(t_token_type type, char *target);
-void redir_add_back(t_redir **head, t_redir *new);
+t_redir			*redir_new(t_token_type type, char *target);
+void			redir_add_back(t_redir **head, t_redir *new);
 
 /* cmd_node_utils.c */
-t_cmd	*cmd_new(void);
-void	cmd_add_back(t_cmd **head, t_cmd *new);
-int cmd_add_args(char *value, t_cmd *cmd);
-
+t_cmd			*cmd_new(void);
+void			cmd_add_back(t_cmd **head, t_cmd *new);
+int				cmd_add_args(char *value, t_cmd *cmd);
 
 /* operator.c */
 t_token_type	classify_operator(char *line);
@@ -125,40 +123,41 @@ t_token_type	classify_operator(char *line);
 t_token			*tokenizer(char *line_read);
 
 /* parser.c */
-int validate_syntax(t_token *tokens);
-t_cmd *parse_token(t_token *tokens);
+int				validate_syntax(t_token *tokens);
+t_cmd			*parse_token(t_token *tokens);
 
 /* environment_variable.c */
-char **init_env_variable(char **envp);
-char **add_new_variable(char **existing_env, char *new_var);
-char **remove_variable(char **existing_env, char *var);
-char **update_variable(char **existing_env, char *var);
-int get_target_variable_index(char **existing_env, char *target_var);
-int search_variable(char **existing_env, char *target_var);
+char			**init_env_variable(char **envp);
+char			**add_new_variable(char **existing_env, char *new_var);
+char			**remove_variable(char **existing_env, char *var);
+char			**update_variable(char **existing_env, char *var);
+int				get_target_variable_index(char **existing_env,\
+				char *target_var);
+int				search_variable(char **existing_env, char *target_var);
 
 /* expander.c */
-char	*get_env_key(char *var);
-char	*get_env_value(char *name, char **envp);
-char	*expand_variable(char *str, int *i, t_shell *shell);
-char	*expand_word(char *str, t_shell *shell);
-char *expand_word_without_env(char *str);
-int expand_command(t_cmd *cmd, t_shell *shell);
+char			*get_env_key(char *var);
+char			*get_env_value(char *name, char **envp);
+char			*expand_variable(char *str, int *i, t_shell *shell);
+char			*expand_word(char *str, t_shell *shell);
+char			*expand_word_without_env(char *str);
+int				expand_command(t_cmd *cmd, t_shell *shell);
 
 /* debug_functions */
-void display_tokens(t_token *tokens);
-void	print_cmd_list(t_cmd *cmd);
-void print_env(char **env);
+void			display_tokens(t_token *tokens);
+void			print_cmd_list(t_cmd *cmd);
+void			print_env(char **env);
 
 /* cleaner.c */
-void	clean_up_arr_str(char **arr);
-void	clean_up_redirs(t_redir *redirs);
-void	clean_up_cmd(t_cmd *cmd);
-void	clean_up_shell(t_shell *shell);
+void			clean_up_arr_str(char **arr);
+void			clean_up_redirs(t_redir *redirs);
+void			clean_up_cmd(t_cmd *cmd);
+void			clean_up_shell(t_shell *shell);
 
 /* prompt_validator.c */
-int is_empty_prompt(const char *line_read);
-int is_only_space(const char *line_read);
+int				is_empty_prompt(const char *line_read);
+int				is_only_space(const char *line_read);
 
-long	ft_atol(const char *str);
+long			ft_atol(const char *str);
 
 #endif

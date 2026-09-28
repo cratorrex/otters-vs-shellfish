@@ -19,10 +19,12 @@ SRCS = \
 	builtins/msh_unset.c 			\
 	builtins/msh_cd_helper.c 		\
 	builtins/msh_export_helper.c 	\
+	exec/msh_exec.c					\
 	exec/msh_pipexec.c				\
 	exec/msh_redir_left.c			\
 	exec/msh_redir_right.c			\
 	exec/msh_pxheredoc.c			\
+	exec/msh_exec_utils.c			\
 	signal/msh_signal.c 			\
 	src/helper/ft_strcmp.c 			\
 	src/helper/ft_atol.c 			\
@@ -41,6 +43,7 @@ SRCS = \
 	src/environment_variable.c \
 	src/debug_functions.c		\
 	src/cleaner.c				\
+	src/builtin_validator.c		\
 	src/minishell.c 
 
 

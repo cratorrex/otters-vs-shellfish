@@ -18,7 +18,7 @@ typedef int	t_mpx_fd[2];
 t_mpx_fd	*msh_pipexec(t_cmd *cmd);
 int	msh_exec_one(t_cmd *cmd, t_shell *shell);
 int	mexec_find_path(char **found, char *path, char *cmd0);
-
+int	mexec_isbuiltin(t_cmd *cmd, t_shell *shell);
 
 t_builtin_cmd is_builtin_cmd(char *cmd);
 
