@@ -34,66 +34,50 @@ Bash version following 5.1.16 on the school's computer.
 
 //seems like count is needed in some capacity,
 //inb4 overrunning into unread territory
-static int	mecho_lenstr(char **str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
-}
 
 //if print success return (aka exit) 0
 //option "-n"
-static int	mecho_ncheck(char *string, int *count)
+
+static int	is_n_option(char *str)
 {
 	int	i;
 
-	i = 0;
-	if (string && string[i])
+	if (!str || str[0] != '-')
+		return (0);
+	i = 1;
+	if (!str[i])
+		return (0);
+	while (str[i])
 	{
-		if (string[i] == '-')
-		{
-			i ++;
-			while (string[i])
-			{
-				if (string[i] == 'n')
-					i ++;
-				else
-					break ;
-			}
-			if (string[i] == 0)
-				return (-- (*count), 1);
-		}
+		if (str[i] != 'n')
+			return (0);
+		i++;
 	}
-	return (0);
+	return (1);
 }
 
-int	msh_echo(t_shell *shell, char **string, int i)
+int	msh_echo(t_shell *shell, char **av)
 {
+	int	i;
 	int	nflag;
-	int	count;
 
-	count = mecho_lenstr(string) - 1;
-	nflag = mecho_ncheck(string[i], &count);
-	if (count > 0 && string[i])
+	i = 1;
+	nflag = 0;
+	while (av[i] && is_n_option(av[i]))
 	{
-		if (nflag == 1)
-			i ++;
-		while (string[i] && count > 0)
-		{
-			printf("%s", string[i]);
-			i ++;
-			count --;
-			if (count > 0)
-				printf(" ");
-			else
-				break ;
-		}
+		nflag = 1;
+		i++;
 	}
-	if (nflag == 0)
+	while (av[i])
+	{
+		printf("%s", av[i]);
+		i++;
+		if (av[i])
+			printf(" ");
+	}
+	if (!nflag)
 		printf("\n");
-	shell->exit_status = 0;
+	if (shell)
+		shell->exit_status = 0;
 	return (0);
 }

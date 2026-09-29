@@ -30,21 +30,27 @@ int	mexec_fork(t_cmd *cmd, /* t_mpx_fd *store, */ t_shell *shell)
 /*thing*/
 int	mexec_isbuiltin(t_cmd *cmd, t_shell *shell)
 {
-	if (is_builtin_cmd(cmd->av[0]) == EXIT)
-		return (msh_exit(shell, cmd->av));
-	if (is_builtin_cmd(cmd->av[0]) == ENV)
-		return (msh_env(shell, cmd->av));
-	if (is_builtin_cmd(cmd->av[0]) == UNSET)
-		return (msh_unset(shell, cmd->av));
-	if (is_builtin_cmd(cmd->av[0]) == EXPORT)
-		return (msh_export(shell, cmd->av));
-	if (is_builtin_cmd(cmd->av[0]) == PWD)
-		return (msh_pwd()); //placeholder sends void
-	if (is_builtin_cmd(cmd->av[0]) == CD)
-		return (msh_cd(shell, cmd->av));
-	if (is_builtin_cmd(cmd->av[0]) == ECHO)
-		return (msh_echo(shell, cmd->av, 1));
-	else return 0;
+	long status;
+	int builtin;
+
+	status = 0;
+	builtin = is_builtin_cmd(cmd->av[0]);
+	if (builtin == EXIT)
+		status = msh_exit(shell, cmd->av);
+	else if (builtin == ENV)
+		status = msh_env(shell, cmd->av);
+	else if (builtin == UNSET)
+		status = msh_unset(shell, cmd->av);
+	else if (builtin == EXPORT)
+		status = msh_export(shell, cmd->av);
+	else if (builtin == PWD)
+		status = msh_pwd();
+	else if (builtin == CD)
+		status = msh_cd(shell, cmd->av);
+	else if (builtin == ECHO)
+		status = msh_echo(shell, cmd->av);
+	shell->exit_status = status;
+	return (status);
 }
 
 //this is a stack fd[2] rn... but can be made into a heap fd[2]
@@ -98,4 +104,9 @@ int	msh_exec(t_cmd *cmd, t_shell *shell)
  */	
 	}
 	return (0);
+}
+
+int execute_command(t_cmd *cmd, t_shell *shell)
+{
+	return (1);
 }

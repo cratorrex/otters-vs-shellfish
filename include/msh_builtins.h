@@ -16,7 +16,7 @@
 
 #  include "minishell.h"
 
-int		msh_echo(t_shell *shell, char **string, int i);
+int	    msh_echo(t_shell *shell, char **av);
 int		msh_pwd(void);
 int		msh_cd(t_shell *shell, char **av);
 int		msh_export(t_shell *shell, char **av);
