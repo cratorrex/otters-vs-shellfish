@@ -97,7 +97,7 @@ static int	process_line(t_shell *shell, char *line)
 		return (0);
 	}
 	print_cmd_list(cmd);
-	// execute_commands(cmd, shell);
+	execute_commands(cmd, shell);
 	clean_up_cmd(cmd);
 	token_clear(&tokens);
 	return (1);

@@ -78,15 +78,15 @@ int	msh_exec_one(t_cmd *cmd, t_shell *shell)
 
 int	msh_exec(t_cmd *cmd, t_shell *shell)
 {
-	t_mpx_fd	*store;//[0] in [1] out
+	// t_mpx_fd	*store;//[0] in [1] out
 	//pid_t	pid;
-	int	i;
+	// int	i;
 	//char **find;
 
 	if (!cmd->next) //basic command, no pipes
 		return (msh_exec_one(cmd, shell));
-	i = 0;
-	store = msh_pipexec(cmd);//malloc and redir everythigsjkgfl
+	// i = 0;
+	// store = msh_pipexec(cmd);//malloc and redir everythigsjkgfl
 	while (cmd)
 	{
 		//idk fork it
@@ -106,7 +106,12 @@ int	msh_exec(t_cmd *cmd, t_shell *shell)
 	return (0);
 }
 
-int execute_command(t_cmd *cmd, t_shell *shell)
+int	execute_command(t_cmd *cmd, t_shell *shell)
 {
-	return (1);
+	if (!cmd || !shell)
+		return (1);
+	if (!cmd->next && cmd->av && cmd->av[0]
+		&& is_builtin_cmd(cmd->av[0]) != UNKNOWN_CMD)
+		return (execute_single_builtin(cmd, shell));
+	return (execute_pipeline(cmd, shell));
 }

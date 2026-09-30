@@ -60,9 +60,9 @@ t_mpx_fd	*msh_pipexec(t_cmd *cmd)
 {
 	t_mpx_fd	*store;
 	//t_mpx_fd	*pipe;
-	int	i;
+	// int	i;
 
-	i = 0;
+	// i = 0;
 	store = mpx_traverse_pipe(cmd);//whole array of pipeline
 	//stuff for one command:below
 	//

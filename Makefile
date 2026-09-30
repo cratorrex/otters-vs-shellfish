@@ -25,6 +25,11 @@ SRCS = \
 	exec/msh_redir_right.c			\
 	exec/msh_pxheredoc.c			\
 	exec/msh_exec_utils.c			\
+	exec/msh_exec_builtins.c		\
+	exec/msh_exec_helper.c 			\
+	exec/msh_exec_pipeline.c 		\
+	exec/msh_path_resolutions.c 	\
+	exec/msh_redirection.c 			\
 	signal/msh_signal.c 			\
 	src/helper/ft_strcmp.c 			\
 	src/helper/ft_atol.c 			\
