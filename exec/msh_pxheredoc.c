@@ -34,7 +34,7 @@
 // 		if (!ptr || ft_strncmp(ptr, delimiter, ft_strlen(delimiter)) == 0)
 // 		{
 // 			if (!ptr)
-// 				printf("msh: warning: here-document delimited by end-of-file\
+// 				printf("msh: warning: here-document delimited by end-of-file
 // (wanted `%s')\n", delimiter);
 // 			if (!ptr || ft_strlen(ptr) - 1 == ft_strlen(delimiter))
 // 				break ;

@@ -13,6 +13,8 @@
 # include <errno.h>
 # include <fcntl.h>
 # include <dirent.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 # include "msh_signal.h"
 

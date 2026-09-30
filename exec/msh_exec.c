@@ -54,57 +54,57 @@ int	mexec_isbuiltin(t_cmd *cmd, t_shell *shell)
 }
 
 //this is a stack fd[2] rn... but can be made into a heap fd[2]
-int	msh_exec_one(t_cmd *cmd, t_shell *shell)
-{
-	t_mpx_fd	*fd;
-	t_mpx_fd	dup_io;
+// int	msh_exec_one(t_cmd *cmd, t_shell *shell)
+// {
+// 	t_mpx_fd	*fd;
+// 	t_mpx_fd	dup_io;
 
-	mpx_traverse_left(cmd, &fd);
-	mpx_traverse_right(cmd, &fd);
-	dup_io[0] = dup(0);
-	dup_io[1] = dup(1);
-	//no fork if builtin
+// 	mpx_traverse_left(cmd, &fd);
+// 	mpx_traverse_right(cmd, &fd);
+// 	dup_io[0] = dup(0);
+// 	dup_io[1] = dup(1);
+// 	//no fork if builtin
 
-	if (is_builtin_cmd(cmd->av[0]) != UNKNOWN_CMD)
-	{
-		mexec_isbuiltin(cmd, shell);
-	}
-	else
-	{
+// 	if (is_builtin_cmd(cmd->av[0]) != UNKNOWN_CMD)
+// 	{
+// 		mexec_isbuiltin(cmd, shell);
+// 	}
+// 	else
+// 	{
 		
-	}
-	return (0);
-}
+// 	}
+// 	return (0);
+// }
 
-int	msh_exec(t_cmd *cmd, t_shell *shell)
-{
-	// t_mpx_fd	*store;//[0] in [1] out
-	//pid_t	pid;
-	// int	i;
-	//char **find;
+// int	msh_exec(t_cmd *cmd, t_shell *shell)
+// {
+// 	// t_mpx_fd	*store;//[0] in [1] out
+// 	//pid_t	pid;
+// 	// int	i;
+// 	//char **find;
 
-	if (!cmd->next) //basic command, no pipes
-		return (msh_exec_one(cmd, shell));
-	// i = 0;
-	// store = msh_pipexec(cmd);//malloc and redir everythigsjkgfl
-	while (cmd)
-	{
-		//idk fork it
-/* 		if (pid < 0)
-			cry();//update last to indicate error
-		else if (!pid)
-		{
-			set_fd(fd, pfd);
-			gra_elsewhere();
-		}
-		else
-			pid = sumshit;
-		//rmb fork errors
-		return (child_wait());
- */	
-	}
-	return (0);
-}
+// 	if (!cmd->next) //basic command, no pipes
+// 		return (msh_exec_one(cmd, shell));
+// 	// i = 0;
+// 	// store = msh_pipexec(cmd);//malloc and redir everythigsjkgfl
+// 	while (cmd)
+// 	{
+// 		//idk fork it
+// /* 		if (pid < 0)
+// 			cry();//update last to indicate error
+// 		else if (!pid)
+// 		{
+// 			set_fd(fd, pfd);
+// 			gra_elsewhere();
+// 		}
+// 		else
+// 			pid = sumshit;
+// 		//rmb fork errors
+// 		return (child_wait());
+//  */	
+// 	}
+// 	return (0);
+// }
 
 int	execute_command(t_cmd *cmd, t_shell *shell)
 {
