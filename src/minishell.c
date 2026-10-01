@@ -109,6 +109,31 @@ void	shell_loop(t_shell *shell)
 	}
 }
 
+static void	set_shell_level(t_shell *shell, char *shlvl)
+{
+	int		lvl;
+	char	**av;
+	char	*res;
+	int		i;
+
+	lvl = ft_atoi(shlvl);
+	free(shlvl);
+	lvl ++;
+	shlvl = ft_itoa(lvl);
+	res = ft_strjoin("export SHLVL=", shlvl);
+	av = ft_split(res, ' ');
+	msh_export(shell, av);
+	free(res);
+	i = 0;
+	while (av[i])
+	{
+		free(av[i]);
+		i++;
+	}
+	free(av);
+	free(shlvl);
+}
+
 int	main(int argc, char **av, char **envp)
 {
 	t_shell	shell;
@@ -125,6 +150,7 @@ int	main(int argc, char **av, char **envp)
 		return (1);
 	}
 	signal(SIGINT, handle_sigint);
+	set_shell_level(&shell, get_env_value("SHLVL", shell.env));
 	shell_loop(&shell);
 	clear_history();
 	clean_up_shell(&shell);

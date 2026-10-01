@@ -54,30 +54,30 @@ int	cd_change_dir(t_shell *shell, char *path, int print_path)
 	char	*newpwd;
 
 	oldpwd = get_env_value("PWD", shell->env);
-	if (oldpwd)
+/* 	if (oldpwd)
 	{
 		oldpwd = ft_strdup(oldpwd);
-		if (!oldpwd)
-			return (1);
-	}
-	if (chdir(path) == -1)
+ */		if (!oldpwd)
+			return (free(path), 1);
+/* 	}
+ */	if (chdir(path) == -1)
 	{
 		free(oldpwd);
 		perror("msh: cd");
-		return (1);
+		return (free(path), 1);
 	}
 	newpwd = getcwd(NULL, 0);
 	if (!newpwd)
 	{
 		free(oldpwd);
 		perror("msh: cd: getcwd");
-		return (1);
+		return (free(path), 1);
 	}
 	if (cd_update_env(shell, oldpwd, newpwd))
 	{
 		free(oldpwd);
 		free(newpwd);
-		return (1);
+		return (free(path), 1);
 	}
 	if (print_path)
 		ft_putendl_fd(newpwd, 1);
