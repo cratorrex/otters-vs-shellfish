@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   msh_export_helper.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jatansil <jatansil@42mail.sutd.edu.sg>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/01 17:30:21 by jatansil          #+#    #+#             */
+/*   Updated: 2026/10/01 17:31:46 by jatansil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static int	env_count(char **env)
@@ -94,14 +106,14 @@ static void	print_export_variable(char *var)
 	printf("=\"%s\"\n", equal + 1);
 }
 
-void free_env(char **env)
+void	free_env(char **env)
 {
-    int i;
+	int	i;
 
-    i = 0;
-    while (env[i])
-        free(env[i++]);
-    free(env);
+	i = 0;
+	while (env[i])
+		free(env[i++]);
+	free(env);
 }
 
 int	print_export(char **env)

@@ -1,55 +1,68 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenizer.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jatansil <jatansil@42mail.sutd.edu.sg>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/01 16:17:38 by jatansil          #+#    #+#             */
+/*   Updated: 2026/10/01 16:39:29 by jatansil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-static void screen_quote_status(t_quote_state *quote, const char *line, int *i)
+static void	screen_quote_status(t_quote_state *quote, const char *line, int *i)
 {
-    while (line[*i])
-    {
-        if (*quote == QUOTE_NONE)
-        {
-            if (line[*i] == ' ' || line[*i] == '\t' || line[*i] == '|' || line[*i] == '<' || line[*i] == '>')
-                break ;
-            else if (line[*i] == '\'')
-                *quote = QUOTE_SINGLE;
-            else if (line[*i] == '"')
-                *quote = QUOTE_DOUBLE;
-        }
-        else if (*quote == QUOTE_SINGLE)
-        {
-            if (line[*i] == '\'')
-                *quote = QUOTE_NONE;
-        }
-        else if (*quote == QUOTE_DOUBLE)
-        {
-            if (line[*i] == '"')
-                *quote = QUOTE_NONE;
-        }
-        (*i)++;
-    }
+	while (line[*i])
+	{
+		if (*quote == QUOTE_NONE)
+		{
+			if (line[*i] == ' ' || line[*i] == '\t' || line[*i] == '|'
+				|| line[*i] == '<' || line[*i] == '>')
+				break ;
+			else if (line[*i] == '\'')
+				*quote = QUOTE_SINGLE;
+			else if (line[*i] == '"')
+				*quote = QUOTE_DOUBLE;
+		}
+		else if (*quote == QUOTE_SINGLE)
+		{
+			if (line[*i] == '\'')
+				*quote = QUOTE_NONE;
+		}
+		else if (*quote == QUOTE_DOUBLE)
+		{
+			if (line[*i] == '"')
+				*quote = QUOTE_NONE;
+		}
+		(*i)++;
+	}
 }
 
-char *read_token(char *line, int *i)
+char	*read_token(char *line, int *i)
 {
-    t_quote_state quote;
-    int           start;
-    int           end;
-    char          *word;
+	t_quote_state	quote;
+	int				start;
+	int				end;
+	char			*word;
 
-    quote = QUOTE_NONE;
-    start = *i;
-    screen_quote_status(&quote, line, i);
-    if (quote == QUOTE_SINGLE)
-    {
-        printf("ERROR: syntax error: unclosed single quote\n");
-        return (NULL);
-    }
-    else if (quote == QUOTE_DOUBLE)
-    {
-        printf("ERROR: syntax error: unclosed double quote\n");
-        return (NULL);
-    }
-    end = *i;
-    word = ft_substr(line, start, end - start);
-    return (word);
+	quote = QUOTE_NONE;
+	start = *i;
+	screen_quote_status(&quote, line, i);
+	if (quote == QUOTE_SINGLE)
+	{
+		printf("ERROR: syntax error: unclosed single quote\n");
+		return (NULL);
+	}
+	else if (quote == QUOTE_DOUBLE)
+	{
+		printf("ERROR: syntax error: unclosed double quote\n");
+		return (NULL);
+	}
+	end = *i;
+	word = ft_substr(line, start, end - start);
+	return (word);
 }
 
 char	*read_operator(char *line, int *i)
@@ -60,7 +73,6 @@ char	*read_operator(char *line, int *i)
 
 	start = *i;
 	len = 1;
-
 	if ((line[*i] == '<' && line[*i + 1] == '<')
 		|| (line[*i] == '>' && line[*i + 1] == '>'))
 		len = 2;
@@ -71,55 +83,52 @@ char	*read_operator(char *line, int *i)
 	return (operator);
 }
 
-static void skip_leading_delimiter(char *line, int *i)
+static void	skip_leading_delimiter(char *line, int *i)
 {
-    while (is_delimiter(line[*i]))
-        (*i)++;
+	while (is_delimiter(line[*i]))
+		(*i)++;
 }
 
-static void adding_token(char **token, t_token **token_lst)
+static void	adding_token(char **token, t_token **token_lst)
 {
-    t_token *new_token;
+	t_token	*new_token;
 
-    new_token = token_new(*token, classify_operator(*token));
-    free(*token);
-    if (!new_token)
-        return ;
-    token_add_back(token_lst, new_token);
+	new_token = token_new(*token, classify_operator(*token));
+	free(*token);
+	if (!new_token)
+		return ;
+	token_add_back(token_lst, new_token);
 }
 
-
-void clean_up_token_lst(t_token *token_lst)
+void	clean_up_token_lst(t_token *token_lst)
 {
-    if (!token_lst)
-        return ;
+	if (!token_lst)
+		return ;
 }
 
-t_token *tokenizer(char *line_read)
+t_token	*tokenizer(char *line_read)
 {
-    int i;
-    char *token;
-    t_token *token_lst;
-    
-    token_lst = NULL;
-    if (!line_read)
-        return (NULL);
-    i = 0;
-    while (line_read[i])
-    {
-        /* skip unecessary preceding delimiter */
-        skip_leading_delimiter(line_read, &i);
-        /* detect operator token & detect non-operator word*/
-        if (is_operator(line_read[i]))
-            token = read_operator(line_read, &i);
-        else
-            token = read_token(line_read, &i);
-        if (!token)
-        {
-            token_clear(&token_lst);
-            return (NULL);
-        }
-        adding_token(&token, &token_lst);
-    }
-    return (token_lst);
+	int		i;
+	char	*token;
+	t_token	*token_lst;
+
+	token_lst = NULL;
+	if (!line_read)
+		return (NULL);
+	i = 0;
+	while (line_read[i])
+	{
+		skip_leading_delimiter(line_read, &i);
+		if (is_operator(line_read[i]))
+			token = read_operator(line_read, &i);
+		else
+			token = read_token(line_read, &i);
+		if (!token)
+		{
+			token_clear(&token_lst);
+			return (NULL);
+		}
+		adding_token(&token, &token_lst);
+	}
+	return (token_lst);
 }

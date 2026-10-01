@@ -10,3 +10,4 @@ minishell
 *.log
 *.json
 storage_rebase/
+experiment/

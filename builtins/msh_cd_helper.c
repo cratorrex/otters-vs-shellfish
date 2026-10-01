@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   msh_cd_helper.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jatansil <jatansil@42mail.sutd.edu.sg>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/01 17:32:16 by jatansil          #+#    #+#             */
+/*   Updated: 2026/10/01 17:32:29 by jatansil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	cd_set_variable(t_shell *shell, char *key, char *value)
@@ -73,6 +85,3 @@ int	cd_change_dir(t_shell *shell, char *path, int print_path)
 	free(newpwd);
 	return (0);
 }
-
-
-

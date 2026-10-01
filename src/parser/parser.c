@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jatansil <jatansil@42mail.sutd.edu.sg>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/01 17:08:31 by jatansil          #+#    #+#             */
+/*   Updated: 2026/10/01 17:11:05 by jatansil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-static int is_valid_token_structure(t_token *current)
+static int	is_valid_token_structure(t_token *current)
 {
 	if (current->type == TOKEN_PIPE)
 	{
@@ -19,28 +31,28 @@ static int is_valid_token_structure(t_token *current)
 	return (1);
 }
 
-int validate_syntax(t_token *tokens)
+int	validate_syntax(t_token *tokens)
 {
-    t_token *current;
+	t_token	*current;
 
-    if (!tokens)
-        return (0);
-    current = tokens;
-    if (current->type == TOKEN_PIPE)
-        return (0);
-    while (current)
-    {
-        if (!is_valid_token_structure(current))
+	if (!tokens)
+		return (0);
+	current = tokens;
+	if (current->type == TOKEN_PIPE)
+		return (0);
+	while (current)
+	{
+		if (!is_valid_token_structure(current))
 			return (0);
-        current = current->next;
-    }
-    return (1);
+		current = current->next;
+	}
+	return (1);
 }
 
-int parse_command(t_token **tokens, t_cmd *cmd)
+int	parse_command(t_token **tokens, t_cmd *cmd)
 {
-	t_token *current;
-	t_redir *new_redir;
+	t_token	*current;
+	t_redir	*new_redir;
 
 	if (!*tokens || !cmd)
 		return (0);
@@ -64,10 +76,10 @@ int parse_command(t_token **tokens, t_cmd *cmd)
 	return (1);
 }
 
-t_cmd *parse_token(t_token *tokens)
+t_cmd	*parse_token(t_token *tokens)
 {
-	t_cmd *head_cmd;
-	t_cmd *new_cmd;
+	t_cmd	*head_cmd;
+	t_cmd	*new_cmd;
 
 	if (!tokens)
 		return (NULL);

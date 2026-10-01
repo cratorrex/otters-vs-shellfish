@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cmd_node_utils.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jatansil <jatansil@42mail.sutd.edu.sg>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/01 16:51:00 by jatansil          #+#    #+#             */
+/*   Updated: 2026/10/01 16:53:41 by jatansil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 t_cmd	*cmd_new(void)
@@ -28,11 +40,11 @@ void	cmd_add_back(t_cmd **head, t_cmd *new)
 	current_node->next = new;
 }
 
-int cmd_add_args(char *value, t_cmd *cmd)
+int	cmd_add_args(char *value, t_cmd *cmd)
 {
-	int count;
-	int i;
-	char **new_av;
+	int		count;
+	int		i;
+	char	**new_av;
 
 	if (!value || !cmd)
 		return (0);
@@ -60,10 +72,10 @@ int cmd_add_args(char *value, t_cmd *cmd)
 	return (1);
 }
 
-int cmd_size(t_cmd *cmd)
+int	cmd_size(t_cmd *cmd)
 {
-	int i;
-	
+	int	i;
+
 	i = 0;
 	while (cmd->av[i])
 		i++;

@@ -6,11 +6,9 @@
 /*   By: thtay <thtay@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/14 17:00:04 by thtay             #+#    #+#             */
-/*   Updated: 2026/08/14 17:00:07 by thtay            ###   ########.fr       */
+/*   Updated: 2026/10/01 17:20:36 by jatansil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "minishell.h"
 
 #include "minishell.h"
 
@@ -53,7 +51,7 @@ static int	cd_tilde(t_shell *shell)
 	return (cd_change_dir(shell, home, 0));
 }
 
-static int mcd_check_fx_ok(char *dir)
+static int	mcd_check_fx_ok(char *dir)
 {
 	DIR	*directory;
 

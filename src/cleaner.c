@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cleaner.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jatansil <jatansil@42mail.sutd.edu.sg>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/01 15:59:23 by jatansil          #+#    #+#             */
+/*   Updated: 2026/10/01 16:00:27 by jatansil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	clean_up_arr_str(char **arr)
@@ -35,11 +47,9 @@ void	clean_up_cmd(t_cmd *cmd)
 	while (cmd)
 	{
 		tmp = cmd->next;
-
 		clean_up_arr_str(cmd->av);
 		clean_up_redirs(cmd->redirs);
 		free(cmd);
-
 		cmd = tmp;
 	}
 }

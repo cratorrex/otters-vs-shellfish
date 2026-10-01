@@ -6,7 +6,7 @@
 /*   By: thtay <thtay@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/14 20:19:59 by thtay             #+#    #+#             */
-/*   Updated: 2026/08/14 20:20:00 by thtay            ###   ########.fr       */
+/*   Updated: 2026/10/01 17:23:59 by jatansil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@ static int	get_argc(char **av)
 	return (i);
 }
 
-static int isvalid_exit_arg(char *arg)
+static int	isvalid_exit_arg(char *arg)
 {
-    int i;
+	int	i;
 
 	i = 0;
 	while (arg[i] == ' ' || (arg[i] >= 9 && arg[i] <= 13))
@@ -39,7 +39,6 @@ static int isvalid_exit_arg(char *arg)
 	}
 	return (1);
 }
-
 
 /* Note: return value is the shell exit status, handle later
 	CTRL^D should call this function

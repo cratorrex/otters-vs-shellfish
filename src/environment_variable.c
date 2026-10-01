@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   environment_variable.c                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jatansil <jatansil@42mail.sutd.edu.sg>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/01 16:00:50 by jatansil          #+#    #+#             */
+/*   Updated: 2026/10/01 16:08:48 by jatansil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static char	**freed_up_env(int index, char **env)
@@ -7,7 +19,6 @@ static char	**freed_up_env(int index, char **env)
 	free(env);
 	return (NULL);
 }
-
 
 static void	freed_up_existing_env(char **existing_env)
 {
@@ -21,30 +32,30 @@ static void	freed_up_existing_env(char **existing_env)
 	free(existing_env);
 }
 
-char **init_env_variable(char **envp)
+char	**init_env_variable(char **envp)
 {
-    int i;
-    int j;
-    char **env_variable;
+	int		i;
+	int		j;
+	char	**env_variable;
 
-    if (!envp)
-        return (NULL);
-    i = 0;
-    while (envp[i])
-        i++;
-    env_variable = malloc(sizeof(char *) * (i + 1));
-    if (!env_variable)
-        return (NULL);
-    j = 0;
-    while (envp[j])
-    {
-        env_variable[j] = ft_strdup(envp[j]);
-        if (!env_variable[j])
-            return (freed_up_env(j, env_variable));
-        j++;
-    }
-    env_variable[j] = NULL;
-    return (env_variable);
+	if (!envp)
+		return (NULL);
+	i = 0;
+	while (envp[i])
+		i++;
+	env_variable = malloc(sizeof(char *) * (i + 1));
+	if (!env_variable)
+		return (NULL);
+	j = 0;
+	while (envp[j])
+	{
+		env_variable[j] = ft_strdup(envp[j]);
+		if (!env_variable[j])
+			return (freed_up_env(j, env_variable));
+		j++;
+	}
+	env_variable[j] = NULL;
+	return (env_variable);
 }
 
 char	**add_new_variable(char **existing_env, char *new_var)
@@ -77,25 +88,25 @@ char	**add_new_variable(char **existing_env, char *new_var)
 	return (new_env);
 }
 
-int get_target_variable_index(char **existing_env, char *target_var)
+int	get_target_variable_index(char **existing_env, char *target_var)
 {
-    int len;
-    int i;
+	int	len;
+	int	i;
 
-    if (!existing_env || !target_var)
-        return (-1);
-    len = ft_strlen(target_var);
-    i = 0;
-    while (existing_env[i])
-    {
-        if (ft_strncmp(existing_env[i], target_var, len) == 0
-            && existing_env[i][len] == '=')
-        {
-            return (i);
-        }
-        i++;
-    }
-    return (-1);
+	if (!existing_env || !target_var)
+		return (-1);
+	len = ft_strlen(target_var);
+	i = 0;
+	while (existing_env[i])
+	{
+		if (ft_strncmp(existing_env[i], target_var, len) == 0
+			&& existing_env[i][len] == '=')
+		{
+			return (i);
+		}
+		i++;
+	}
+	return (-1);
 }
 
 char	**remove_variable(char **existing_env, char *var)

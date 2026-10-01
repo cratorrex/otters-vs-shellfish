@@ -6,7 +6,7 @@
 /*   By: thtay <thtay@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/14 17:00:10 by thtay             #+#    #+#             */
-/*   Updated: 2026/08/14 17:00:11 by thtay            ###   ########.fr       */
+/*   Updated: 2026/10/01 17:29:10 by jatansil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,3 @@ int	msh_pwd(void)
 	free(cwd);
 	return (0);
 }
-
-/*
-Additional rebase
-code the variant that takes in env and then prints out $PWD
-// match envp for $PWD and print it (using write)
-since PWD=[...], printf +4 
-*/

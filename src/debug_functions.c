@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   debug_functions.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jatansil <jatansil@42mail.sutd.edu.sg>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/01 17:16:56 by jatansil          #+#    #+#             */
+/*   Updated: 2026/10/01 17:17:55 by jatansil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 /*display token for debugging, clean up later*/
@@ -22,7 +34,6 @@ void	print_cmd_list(t_cmd *cmd)
 	while (cmd)
 	{
 		printf("\n========== CMD %d ==========\n", cmd_index);
-
 		printf("Arguments:\n");
 		if (!cmd->av)
 			printf("  (none)\n");
@@ -35,7 +46,6 @@ void	print_cmd_list(t_cmd *cmd)
 				i++;
 			}
 		}
-
 		printf("Redirections:\n");
 		if (!cmd->redirs)
 			printf("  (none)\n");
@@ -49,9 +59,7 @@ void	print_cmd_list(t_cmd *cmd)
 				redir = redir->next;
 			}
 		}
-
 		printf("============================\n");
-
 		cmd = cmd->next;
 		cmd_index++;
 	}

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_word.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jatansil <jatansil@42mail.sutd.edu.sg>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/01 17:04:39 by jatansil          #+#    #+#             */
+/*   Updated: 2026/10/01 17:08:20 by jatansil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static char	*append_char(char *result, char c)
@@ -7,7 +19,6 @@ static char	*append_char(char *result, char c)
 
 	buf[0] = c;
 	buf[1] = '\0';
-
 	tmp = ft_strjoin(result, buf);
 	free(result);
 	return (tmp);
@@ -37,8 +48,7 @@ static int	handle_quote(char c, int *single_quote, int *double_quote)
 	return (0);
 }
 
-static char	*handle_variable(char *str, int *i,
-				char *result, t_shell *shell)
+static char	*handle_variable(char *str, int *i, char *result, t_shell *shell)
 {
 	char	*expanded;
 
@@ -48,14 +58,12 @@ static char	*handle_variable(char *str, int *i,
 		free(result);
 		return (NULL);
 	}
-
 	result = append_string(result, expanded);
 	free(expanded);
-
 	return (result);
 }
 
-char *expand_word_without_env(char *str)
+char	*expand_word_without_env(char *str)
 {
 	int		i;
 	int		single_quote;
@@ -65,11 +73,9 @@ char *expand_word_without_env(char *str)
 	i = 0;
 	single_quote = 0;
 	double_quote = 0;
-
 	result = ft_strdup("");
 	if (!result)
 		return (NULL);
-
 	while (str[i])
 	{
 		if (handle_quote(str[i], &single_quote, &double_quote))
@@ -81,14 +87,11 @@ char *expand_word_without_env(char *str)
 				return (NULL);
 			i++;
 		}
-
 		if (!result)
 			return (NULL);
 	}
-
 	return (result);
 }
-
 
 char	*expand_word(char *str, t_shell *shell)
 {
@@ -100,7 +103,6 @@ char	*expand_word(char *str, t_shell *shell)
 	i = 0;
 	single_quote = 0;
 	double_quote = 0;
-
 	if (ft_strlen(str) == 1 && *str == '~')
 	{
 		result = get_env_value("HOME", shell->env);
@@ -122,10 +124,8 @@ char	*expand_word(char *str, t_shell *shell)
 				return (NULL);
 			i++;
 		}
-
 		if (!result)
 			return (NULL);
 	}
-
 	return (result);
 }

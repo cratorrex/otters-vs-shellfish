@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   msh_export.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jatansil <jatansil@42mail.sutd.edu.sg>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/01 17:26:36 by jatansil          #+#    #+#             */
+/*   Updated: 2026/10/01 17:28:19 by jatansil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static int	isvalid_key_identifier(char *key)
@@ -24,7 +36,7 @@ static int	isvalid_export_arg(char *arg)
 
 	if (!arg)
 		return (0);
-	if(!ft_strchr(arg, '='))
+	if (!ft_strchr(arg, '='))
 		return (0);
 	key = get_env_key(arg);
 	if (!key)

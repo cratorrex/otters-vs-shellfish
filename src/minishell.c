@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jatansil <jatansil@42mail.sutd.edu.sg>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/01 16:09:09 by jatansil          #+#    #+#             */
+/*   Updated: 2026/10/01 16:13:30 by jatansil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 /*
@@ -13,45 +25,13 @@ getenv, tcsetattr, tcgetattr, tgetent, tgetflag,
 tgetnum, tgetstr, tgoto, tputs
 */
 
-/* 
-readline -> reading a prompt from a prompt, return the read line buff minus the newline and the prompt name
-add_history -> adding every prompt to the history list, it will be stored every time we navigate thru arrow up
-rl_on_new_line ->
-rl_clear_history ->
-rl_replace_line ->
-rl_redisplay -> 
-
-access ->
-wait ->
-waitpid ->
-wait3 ->
-wait4 ->
-
-signal ->
-sigaction ->
-sigemptyset ->
-sigaddset ->
-
-kill ->
-exit ->
-getcwd ->
-chdir ->
-
-stat ->
-lstat ->
-fstat ->
-unlink ->
-execve ->
-*/
-
-void handle_sigint(int sig)
+void	handle_sigint(int sig)
 {
-    (void)sig;
-
-    write(STDOUT_FILENO, "\n", 1);
-    rl_on_new_line();
-    rl_replace_line("", 0);
-    rl_redisplay();
+	(void) sig;
+	write(STDOUT_FILENO, "\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 }
 
 int	init_shell(t_shell *shell, char **envp)
@@ -69,7 +49,7 @@ int	init_shell(t_shell *shell, char **envp)
 static int	process_line(t_shell *shell, char *line)
 {
 	t_token	*tokens;
-	t_cmd		*cmd;
+	t_cmd	*cmd;
 
 	tokens = tokenizer(line);
 	if (!tokens)
@@ -133,7 +113,7 @@ int	main(int argc, char **av, char **envp)
 {
 	t_shell	shell;
 
-	(void)av;
+	(void) av;
 	if (argc != 1)
 	{
 		printf("Usage: ./minishell\n");
