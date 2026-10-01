@@ -58,13 +58,13 @@ long	msh_exit(t_shell *shell, char **av)
 	}
 	if (!isvalid_exit_arg(av[1]))
 	{
-		printf("msh: exit: %s: numeric argument required\n", av[1]);
+		printf("minishell: exit: %s: numeric argument required\n", av[1]);
 		shell->should_exit = 1;
 		return (2);
 	}
 	if (argc > 2)
 	{
-		printf("msh: exit: too many arguments\n");
+		printf("minishell: exit: too many arguments\n");
 		return (1);
 	}
 	status = ft_atol(av[1]);

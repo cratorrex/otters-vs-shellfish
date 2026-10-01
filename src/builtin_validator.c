@@ -1,9 +1,7 @@
 #include "minishell.h"
 
 t_builtin_cmd is_builtin_cmd(char *cmd)
-{
-    //int is_match;
-    
+{    
     if (ft_strncmp(cmd, "echo", 5) == 0)
         return (ECHO);
     if (ft_strncmp(cmd, "cd", 3) == 0)

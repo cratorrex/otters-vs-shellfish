@@ -44,19 +44,19 @@ void	child_execute(t_cmd *cmd, t_shell *shell, int prev_read_fd,
 		int pipe_fd[2], int has_next)
 {
 	if (setup_child_pipe_fds(prev_read_fd, pipe_fd, has_next) == -1)
-		_exit(1);
+		exit(1);
 	/*
 	 * Redirections follow pipe setup so an explicit input/output redirect
 	 * overrides that command's corresponding pipeline connection.
 	 */
 	if (setup_redirections(cmd->redirs, shell) == -1)
-		_exit(1);
+		exit(1);
 	if (!cmd->av || !cmd->av[0])
-		_exit(0);
+		exit(0);
 	if (is_builtin_cmd(cmd->av[0]) != UNKNOWN_CMD)
-		_exit(execute_builtin(cmd, shell));
+		exit(execute_builtin(cmd, shell));
 	execute_external_command(cmd, shell);
-	_exit(1);
+	exit(1);
 }
 
 int	execute_pipeline(t_cmd *cmd, t_shell *shell)

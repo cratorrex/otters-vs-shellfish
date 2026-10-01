@@ -55,7 +55,6 @@ int cmd_add_args(char *value, t_cmd *cmd)
 		return (0);
 	}
 	new_av[count + 1] = NULL;
-
 	free(cmd->av);
 	cmd->av = new_av;
 	return (1);

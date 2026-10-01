@@ -79,7 +79,7 @@ void	execute_external_command(t_cmd *cmd, t_shell *shell)
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(cmd->av[0], STDERR_FILENO);
 		ft_putendl_fd(": command not found", STDERR_FILENO);
-		_exit(127);
+		exit(127);
 	}
 	execve(path, cmd->av, shell->env);
 	perror(cmd->av[0]);
@@ -87,5 +87,5 @@ void	execute_external_command(t_cmd *cmd, t_shell *shell)
 	if (errno == ENOENT)
 		status = 127;
 	free(path);
-	_exit(status);
+	exit(status);
 }

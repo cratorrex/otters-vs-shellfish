@@ -42,25 +42,20 @@ char	*expand_variable(char *str, int *i, t_shell *shell)
 	char	*value;
 
 	(*i)++;
-
 	if (str[*i] == '?')
 	{
 		(*i)++;
 		return (ft_itoa(shell->exit_status));
 	}
-
 	if (!is_var_start(str[*i]))
 		return (ft_strdup("$"));
-
 	start = *i;
 	while (str[*i] && is_var_char(str[*i]))
 		(*i)++;
-
 	len = *i - start;
 	name = ft_substr(str, start, len);
 	if (!name)
 		return (NULL);
-
 	value = get_env_value(name, shell->env);
 	free(name);
 	return (value);
