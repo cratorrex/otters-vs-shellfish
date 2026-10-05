@@ -16,7 +16,7 @@ t_token	*token_new(char *value, t_token_type type)
 {
 	t_token	*node;
 
-	if (!value)
+	if (!value || !*value)
 		return (NULL);
 	node = malloc(sizeof(t_token));
 	if (!node)
