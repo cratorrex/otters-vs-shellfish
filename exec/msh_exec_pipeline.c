@@ -39,25 +39,99 @@ int	wait_for_children(t_executor *exec, t_shell *shell)
 	shell->exit_status = last_status;
 	return (last_status);
 }
-
-void	child_execute(t_cmd *cmd, t_shell *shell, int prev_read_fd,
-		int pipe_fd[2], int has_next)
+void	cleanup_child(t_cmd *cmd, t_executor *exec)
 {
-	if (setup_child_pipe_fds(prev_read_fd, pipe_fd, has_next) == -1)
+	clean_up_cmd(cmd);
+	clean_up_shell(exec->shell);
+	free(exec->pids);
+}
+
+// static void	child_exit(t_cmd *cmd, t_shell *shell,
+// 		t_token *tokens, t_executor *exec, int status)
+// {
+// 	cleanup_child(cmd, shell, tokens, exec);
+// 	exit(status);
+// }
+
+void	child_execute(t_cmd *cmd, t_executor *exec, int has_next)
+{
+	int status;
+
+	if (setup_child_pipe_fds(exec->prev_read_fd, exec->pipe_fd, has_next) == -1)
 		exit(1);
-	/*
-	 * Redirections follow pipe setup so an explicit input/output redirect
-	 * overrides that command's corresponding pipeline connection.
-	 */
-	if (setup_redirections(cmd->redirs, shell) == -1)
+	if (setup_redirections(cmd->redirs, exec->shell) == -1)
 		exit(1);
 	if (!cmd->av || !cmd->av[0])
 		exit(0);
 	if (is_builtin_cmd(cmd->av[0]) != UNKNOWN_CMD)
-		exit(execute_builtin(cmd, shell));
-	execute_external_command(cmd, shell);
+	{
+		printf("did it goes here 1\n");
+		status = execute_builtin(cmd, exec->shell);
+		cleanup_child(cmd, exec);
+		exit(status);
+	}
+	execute_external_command(cmd, exec);
 	exit(1);
 }
+
+static int	cleanup_failed_pipeline(t_executor *exec, t_shell *shell)
+{
+	while (exec->launched > 0)
+	{
+		exec->launched--;
+		while (waitpid(exec->pids[exec->launched], NULL, 0) == -1
+			&& errno == EINTR)
+			;
+	}
+	free(exec->pids);
+	shell->exit_status = 1;
+	return (1);
+}
+
+static void	close_executor_fds(t_executor *exec)
+{
+	if (exec->prev_read_fd >= 0)
+		close(exec->prev_read_fd);
+	if (exec->pipe_fd[0] >= 0)
+		close(exec->pipe_fd[0]);
+	if (exec->pipe_fd[1] >= 0)
+		close(exec->pipe_fd[1]);
+}
+
+static int	init_exec(t_executor *exec, t_cmd *cmd, t_shell *shell)
+{
+	exec->cmd_count = count_commands(cmd);
+	exec->pids = malloc(sizeof(pid_t) * exec->cmd_count);
+	if (!exec->pids)
+	{
+		perror("minishell: malloc");
+		shell->exit_status = 1;
+		return (1);
+	}
+	exec->prev_read_fd = -1;
+	exec->pipe_fd[0] = -1;
+	exec->pipe_fd[1] = -1;
+	exec->launched = 0;
+	exec->shell = shell;
+	return (0);
+}
+
+static pid_t	fork_command(t_cmd *current,t_executor *exec,
+				int has_next)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("minishell: fork");
+		return (-1);
+	}
+	if (pid == 0)
+		child_execute(current, exec, has_next);
+	return (pid);
+}
+
 
 int	execute_pipeline(t_cmd *cmd, t_shell *shell)
 {
@@ -66,56 +140,24 @@ int	execute_pipeline(t_cmd *cmd, t_shell *shell)
 	pid_t		pid;
 	int			has_next;
 
-	exec.cmd_count = count_commands(cmd);
-	exec.pids = malloc(sizeof(pid_t) * exec.cmd_count);
-	if (!exec.pids)
-		return (perror("minishell: malloc"), shell->exit_status = 1, 1);
-	exec.prev_read_fd = -1;
-	exec.pipe_fd[0] = -1;
-	exec.pipe_fd[1] = -1;
-	exec.launched = 0;
+	if (init_exec(&exec, cmd, shell))
+		return (1);
 	current = cmd;
 	while (current)
 	{
 		has_next = (current->next != NULL);
 		if (has_next && create_pipe(exec.pipe_fd) == -1)
 			break ;
-		pid = fork();
+		pid = fork_command(current, &exec, has_next);
 		if (pid == -1)
-		{
-			perror("minishell: fork");
 			break ;
-		}
-		if (pid == 0)
-			child_execute(current, shell, exec.prev_read_fd,
-				exec.pipe_fd, has_next);
 		exec.pids[exec.launched++] = pid;
 		close_parent_pipe_fds(&exec, has_next);
 		current = current->next;
 	}
-	if (exec.prev_read_fd >= 0)
-		close(exec.prev_read_fd);
-	if (exec.pipe_fd[0] >= 0)
-		close(exec.pipe_fd[0]);
-	if (exec.pipe_fd[1] >= 0)
-		close(exec.pipe_fd[1]);
+	close_executor_fds(&exec);
 	if (current)
-	{
-		/*
-		 * A pipe or fork failed before all commands launched.
-		 * Reap launched children, then report the launch failure.
-		 */
-		while (exec.launched > 0)
-		{
-			exec.launched--;
-			while (waitpid(exec.pids[exec.launched], NULL, 0) == -1
-				&& errno == EINTR)
-				;
-		}
-		free(exec.pids);
-		shell->exit_status = 1;
-		return (1);
-	}
+		return (cleanup_failed_pipeline(&exec, shell));
 	wait_for_children(&exec, shell);
 	free(exec.pids);
 	return (shell->exit_status);

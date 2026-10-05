@@ -49,10 +49,10 @@ int	validate_syntax(t_token *tokens)
 	return (1);
 }
 
-int	parse_command(t_token **tokens, t_cmd *cmd)
+int parse_command(t_token **tokens, t_cmd *cmd)
 {
-	t_token	*current;
-	t_redir	*new_redir;
+	t_token *current;
+	t_redir *new_redir;
 
 	if (!*tokens || !cmd)
 		return (0);
@@ -67,6 +67,8 @@ int	parse_command(t_token **tokens, t_cmd *cmd)
 		else if (is_redirection(current->type))
 		{
 			new_redir = redir_new(current->type, current->next->value);
+			if (!new_redir)
+				return (0);
 			redir_add_back(&cmd->redirs, new_redir);
 			current = current->next;
 		}
@@ -76,23 +78,27 @@ int	parse_command(t_token **tokens, t_cmd *cmd)
 	return (1);
 }
 
-t_cmd	*parse_token(t_token *tokens)
+t_cmd *parse_token(t_token *tokens)
 {
-	t_cmd	*head_cmd;
-	t_cmd	*new_cmd;
+	t_cmd *head_cmd;
+	t_cmd *new_cmd;
 
 	if (!tokens)
-		return (NULL);
+	return (NULL);
 	head_cmd = NULL;
 	while (tokens)
 	{
 		new_cmd = cmd_new();
 		if (!new_cmd)
+		{
+			clean_up_cmd(new_cmd);
+			clean_up_cmd(head_cmd);
 			return (NULL);
+		}
 		if (!parse_command(&tokens, new_cmd))
 		{
-			token_clear(&tokens);
-			free(new_cmd);
+			clean_up_cmd(head_cmd);
+			clean_up_cmd(new_cmd);
 			return (NULL);
 		}
 		cmd_add_back(&head_cmd, new_cmd);

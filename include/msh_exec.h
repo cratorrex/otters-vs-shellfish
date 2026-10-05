@@ -16,6 +16,7 @@
 
 typedef struct s_executor
 {
+	t_shell *shell;
 	int		prev_read_fd;
 	int		pipe_fd[2];
 	pid_t	*pids;
@@ -56,7 +57,7 @@ int		setup_heredoc_redirection(t_redir *redir, t_shell *shell);
 int		restore_standard_fds(int saved_stdin, int saved_stdout);
 int		execute_builtin(t_cmd *cmd, t_shell *shell);
 char		*resolve_command_path(char *cmd0, char **env);
-void		execute_external_command(t_cmd *cmd, t_shell *shell);
+void		execute_external_command(t_cmd *cmd, t_executor *exec);
 int		wait_for_children(t_executor *exec, t_shell *shell);
 int		execute_single_builtin(t_cmd *cmd, t_shell *shell);
 int		execute_pipeline(t_cmd *cmd, t_shell *shell);

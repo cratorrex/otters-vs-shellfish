@@ -68,24 +68,33 @@ char	*resolve_command_path(char *cmd0, char **env)
 	return (NULL);
 }
 
-void	execute_external_command(t_cmd *cmd, t_shell *shell)
+void clean_up_invalid_command(t_executor *exec, t_cmd *cmd)
+{
+	clean_up_cmd(cmd);
+	clean_up_shell(exec->shell);
+	free(exec->pids);
+}
+
+void	execute_external_command(t_cmd *cmd, t_executor *exec)
 {
 	char	*path;
 	int		status;
 
-	path = resolve_command_path(cmd->av[0], shell->env);
+	path = resolve_command_path(cmd->av[0], exec->shell->env);
 	if (!path)
 	{
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(cmd->av[0], STDERR_FILENO);
 		ft_putendl_fd(": command not found", STDERR_FILENO);
+		clean_up_invalid_command(exec, cmd);
 		exit(127);
 	}
-	execve(path, cmd->av, shell->env);
+	execve(path, cmd->av, exec->shell->env);
 	perror(cmd->av[0]);
 	status = 126;
 	if (errno == ENOENT)
 		status = 127;
 	free(path);
+	clean_up_invalid_command(exec, cmd);
 	exit(status);
 }

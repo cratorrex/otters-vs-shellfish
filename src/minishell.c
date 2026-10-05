@@ -76,6 +76,8 @@ static int	process_line(t_shell *shell, char *line)
 		token_clear(&tokens);
 		return (0);
 	}
+	if (tokens)
+		token_clear(&tokens);
 	execute_command(cmd, shell);
 	clean_up_cmd(cmd);
 	token_clear(&tokens);
