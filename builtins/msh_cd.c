@@ -42,27 +42,27 @@ static int	cd_oldpwd(t_shell *shell)
 	return (free(oldpwd), res);
 }
 
-static int	cd_tilde(t_shell *shell, char *dir)
-{
-	char	*home;
-	char	*subdir;
-	int		res;
+// static int	cd_tilde(t_shell *shell, char *dir)
+// {
+// 	char	*home;
+// 	char	*subdir;
+// 	int		res;
 
-	home = get_env_value("HOME", shell->env);
-	if (!home)
-	{
-		ft_putstr_fd("msh: cd: HOME not set\n", 2);
-		return (1);
-	}
-	if (dir[1] == '/')
-	{
-		subdir = ft_strjoin(home, dir + 1);
-		free(home);
-		home = subdir;
-	}
-	res = cd_change_dir(shell, home, 0);
-	return (free(home), res);
-}
+// 	home = get_env_value("HOME", shell->env);
+// 	if (!home)
+// 	{
+// 		ft_putstr_fd("msh: cd: HOME not set\n", 2);
+// 		return (1);
+// 	}
+// 	if (dir[1] == '/')
+// 	{
+// 		subdir = ft_strjoin(home, dir + 1);
+// 		free(home);
+// 		home = subdir;
+// 	}
+// 	res = cd_change_dir(shell, home, 0);
+// 	return (free(home), res);
+// }
 
 static int	mcd_check_fx_ok(char *dir)
 {
@@ -99,8 +99,8 @@ int	msh_cd(t_shell *shell, char **av)
 	}
 	if (count == 1)
 		return (cd_home(shell));
-	if (ft_strlen(av[1]) >= 1 && av[1][0] == '~')
-		return (cd_tilde(shell, av[1]));
+	// if (ft_strlen(av[1]) >= 1 && av[1][0] == '~')
+	// 	return (cd_tilde(shell, av[1]));
 	if (ft_strlen(av[1]) == 1 && av[1][0] == '-')
 		return (cd_oldpwd(shell));
 	if (mcd_check_fx_ok(av[1]))

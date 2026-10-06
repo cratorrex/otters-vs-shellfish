@@ -93,6 +93,31 @@ char	*expand_word_without_env(char *str)
 	return (result);
 }
 
+static char	*expand_tilde(char *home, int *i, char slash)
+{
+	int	n;
+
+	n = 0;
+	if (!home)
+	{
+		ft_putstr_fd("msh: HOME not set\n", 2);
+		return (NULL);
+	}
+	if (slash == 0 || slash == '/')
+	{
+		*i = *i + 1;
+		while (home[n])
+		{
+			if (home[n] != '/' && home[n + 1] == 0 && slash == 0)
+				return (append_char(home, '/'));
+			else
+				n++;
+		}
+		return(home);
+	}
+	return (free(home), ft_strdup(""));
+}
+
 char	*expand_word(char *str, t_shell *shell)
 {
 	int		i;
@@ -103,12 +128,11 @@ char	*expand_word(char *str, t_shell *shell)
 	i = 0;
 	single_quote = 0;
 	double_quote = 0;
-	if (ft_strlen(str) == 1 && *str == '~')
-	{
-		result = get_env_value("HOME", shell->env);
-		return (result);
-	}
-	result = ft_strdup("");
+	if (ft_strlen(str) >= 1 && *str == '~' &&
+		str[1] != '\"' && str[1] != '\'')
+		result = expand_tilde(get_env_value("HOME", shell->env), &i, str[1]);
+	else
+		result = ft_strdup("");
 	if (!result)
 		return (NULL);
 	while (str[i])
