@@ -34,7 +34,9 @@ static int	isvalid_exit_arg(char *arg)
 	while (arg[i])
 	{
 		if (!(arg[i] >= '0' && arg[i] <= '9'))
-			return (0);
+			return (ft_putstr_fd("minishell: exit:", 2),
+				ft_putstr_fd(arg, 2),
+				ft_putstr_fd(": numeric argument required\n", 2), 0);
 		i++;
 	}
 	return (1);
@@ -57,15 +59,12 @@ long	msh_exit(t_shell *shell, char **av)
 	}
 	if (!isvalid_exit_arg(av[1]))
 	{
-		printf("minishell: exit: %s: numeric argument required\n", av[1]);
 		shell->should_exit = 1;
 		return (2);
 	}
 	if (argc > 2)
-	{
-		printf("minishell: exit: too many arguments\n");
-		return (1);
-	}
+		return (printf("minishell: exit:"),
+			ft_putstr_fd(" too many arguments\n", 2), 1);
 	status = ft_atol(av[1]);
 	shell->should_exit = 1;
 	return ((unsigned char) status);

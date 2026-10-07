@@ -47,15 +47,16 @@ static int	mcd_check_fx_ok(char *dir)
 	DIR	*directory;
 
 	if (access(dir, F_OK) == -1)
-		return (printf("msh: cd: %s: No such file or directory\n",
-				dir), 1);
+		return (printf("msh: cd: %s:", dir),
+			ft_putstr_fd(" No such file or directory\n", 2), 1);
 	directory = opendir(dir);
 	if (!directory)
 	{
+		printf("msh: cd: %s:", dir);
 		if (access(dir, X_OK) == -1)
-			return (printf("msh: cd: %s: Permission denied\n", dir), 1);
+			return (printf(" Permission denied\n"), 1);
 		else
-			return (printf("msh: cd: %s: Not a directory\n", dir), 1);
+			return (printf(" Not a directory\n"), 1);
 	}
 	closedir(directory);
 	return (0);
@@ -77,8 +78,6 @@ int	msh_cd(t_shell *shell, char **av)
 	}
 	if (count == 1)
 		return (cd_home(shell));
-	// if (ft_strlen(av[1]) >= 1 && av[1][0] == '~')
-	// 	return (cd_tilde(shell, av[1]));
 	if (ft_strlen(av[1]) == 1 && av[1][0] == '-')
 		return (cd_oldpwd(shell));
 	if (mcd_check_fx_ok(av[1]))

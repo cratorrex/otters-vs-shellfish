@@ -36,14 +36,15 @@ static int	isvalid_export_arg(char *arg)
 
 	if (!arg)
 		return (0);
-	if (!ft_strchr(arg, '='))
-		return (0);
+	// if (!ft_strchr(arg, '='))
+	// 	return (0);
 	key = get_env_key(arg);
 	if (!key)
 		return (0);
 	if (!isvalid_key_identifier(key))
 	{
-		printf("msh: export: `%s': not a valid identifier\n", arg);
+		printf("msh: export: `%s':", arg);
+		ft_putstr_fd(" not a valid identifier\n", 2);
 		free(key);
 		return (0);
 	}
