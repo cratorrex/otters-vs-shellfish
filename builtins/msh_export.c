@@ -36,8 +36,6 @@ static int	isvalid_export_arg(char *arg)
 
 	if (!arg)
 		return (0);
-	// if (!ft_strchr(arg, '='))
-	// 	return (0);
 	key = get_env_key(arg);
 	if (!key)
 		return (0);
@@ -49,6 +47,8 @@ static int	isvalid_export_arg(char *arg)
 		return (0);
 	}
 	free(key);
+	if (!ft_strchr(arg, '='))
+		return (3);
 	if (ft_strchr(arg, '='))
 		return (1);
 	return (2);
