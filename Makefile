@@ -20,11 +20,7 @@ SRCS = \
 	builtins/msh_cd_helper.c 		\
 	builtins/msh_export_helper.c 	\
 	exec/msh_exec.c					\
-	exec/msh_pipexec.c				\
-	exec/msh_redir_left.c			\
-	exec/msh_redir_right.c			\
 	exec/msh_pxheredoc.c			\
-	exec/msh_exec_utils.c			\
 	exec/msh_exec_builtins.c		\
 	exec/msh_exec_helper.c 			\
 	exec/msh_exec_pipeline.c 		\

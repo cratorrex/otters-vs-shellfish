@@ -86,7 +86,7 @@ void	execute_external_command(t_cmd *cmd, t_executor *exec)
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(cmd->av[0], STDERR_FILENO);
 		ft_putendl_fd(": command not found", STDERR_FILENO);
-		clean_up_invalid_command(exec, cmd);
+		clean_up_invalid_command(exec, exec->shell->cmds);
 		exit(127);
 	}
 	execve(path, cmd->av, exec->shell->env);
@@ -95,6 +95,6 @@ void	execute_external_command(t_cmd *cmd, t_executor *exec)
 	if (errno == ENOENT)
 		status = 127;
 	free(path);
-	clean_up_invalid_command(exec, cmd);
+	clean_up_invalid_command(exec, exec->shell->cmds);
 	exit(status);
 }

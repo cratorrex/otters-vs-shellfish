@@ -154,7 +154,7 @@ int	main(int argc, char **av, char **envp)
 	signal(SIGINT, handle_sigint);
 	set_shell_level(&shell, get_env_value("SHLVL", shell.env));
 	shell_loop(&shell);
-	clear_history();
+	rl_clear_history();
 	clean_up_shell(&shell);
 	return (shell.exit_status);
 }

@@ -46,12 +46,15 @@ void	cleanup_child(t_cmd *cmd, t_executor *exec)
 	free(exec->pids);
 }
 
-// static void	child_exit(t_cmd *cmd, t_shell *shell,
-// 		t_token *tokens, t_executor *exec, int status)
-// {
-// 	cleanup_child(cmd, shell, tokens, exec);
-// 	exit(status);
-// }
+void	close_executor_fds(t_executor *exec)
+{
+	if (exec->prev_read_fd >= 0)
+		close(exec->prev_read_fd);
+	if (exec->pipe_fd[0] >= 0)
+		close(exec->pipe_fd[0]);
+	if (exec->pipe_fd[1] >= 0)
+		close(exec->pipe_fd[1]);
+}
 
 void	child_execute(t_cmd *cmd, t_executor *exec, int has_next)
 {
@@ -65,9 +68,8 @@ void	child_execute(t_cmd *cmd, t_executor *exec, int has_next)
 		exit(0);
 	if (is_builtin_cmd(cmd->av[0]) != UNKNOWN_CMD)
 	{
-		printf("did it goes here 1\n");
 		status = execute_builtin(cmd, exec->shell);
-		cleanup_child(cmd, exec);
+		cleanup_child(exec->shell->cmds, exec);
 		exit(status);
 	}
 	execute_external_command(cmd, exec);
@@ -88,15 +90,6 @@ static int	cleanup_failed_pipeline(t_executor *exec, t_shell *shell)
 	return (1);
 }
 
-static void	close_executor_fds(t_executor *exec)
-{
-	if (exec->prev_read_fd >= 0)
-		close(exec->prev_read_fd);
-	if (exec->pipe_fd[0] >= 0)
-		close(exec->pipe_fd[0]);
-	if (exec->pipe_fd[1] >= 0)
-		close(exec->pipe_fd[1]);
-}
 
 static int	init_exec(t_executor *exec, t_cmd *cmd, t_shell *shell)
 {
@@ -131,7 +124,6 @@ static pid_t	fork_command(t_cmd *current,t_executor *exec,
 		child_execute(current, exec, has_next);
 	return (pid);
 }
-
 
 int	execute_pipeline(t_cmd *cmd, t_shell *shell)
 {

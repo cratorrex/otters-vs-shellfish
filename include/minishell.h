@@ -89,6 +89,7 @@ typedef struct s_shell
 	char	**env;
 	int		exit_status;
 	int		should_exit;
+	struct s_cmd *cmds;
 }	t_shell;
 
 # include "msh_exec.h"
