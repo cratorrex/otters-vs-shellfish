@@ -40,44 +40,44 @@ void	cmd_add_back(t_cmd **head, t_cmd *new)
 	current_node->next = new;
 }
 
-int	cmd_add_args(char *value, t_cmd *cmd)
+static char	**create_new_av(char **av, char *value)
 {
 	int		count;
 	int		i;
 	char	**new_av;
 
-	if (!value || !cmd)
-		return (0);
 	count = 0;
-	while (cmd->av && cmd->av[count])
+	while (av && av[count])
 		count++;
 	new_av = malloc(sizeof(char *) * (count + 2));
 	if (!new_av)
-		return (0);
+		return (NULL);
 	i = 0;
 	while (i < count)
 	{
-		new_av[i] = cmd->av[i];
+		new_av[i] = av[i];
 		i++;
 	}
 	new_av[count] = ft_strdup(value);
 	if (!new_av[count])
 	{
 		free(new_av);
-		return (0);
+		return (NULL);
 	}
 	new_av[count + 1] = NULL;
+	return (new_av);
+}
+
+int	cmd_add_args(char *value, t_cmd *cmd)
+{
+	char	**new_av;
+
+	if (!value || !cmd)
+		return (0);
+	new_av = create_new_av(cmd->av, value);
+	if (!new_av)
+		return (0);
 	free(cmd->av);
 	cmd->av = new_av;
 	return (1);
-}
-
-int	cmd_size(t_cmd *cmd)
-{
-	int	i;
-
-	i = 0;
-	while (cmd->av[i])
-		i++;
-	return (i);
 }

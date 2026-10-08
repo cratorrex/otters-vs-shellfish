@@ -46,6 +46,17 @@ static int	expand_argvs(t_cmd *cmd, t_shell *shell)
 	return (1);
 }
 
+static char	*expand_redir_target(t_redir *redir, t_shell *shell)
+{
+	if (redir->type == TOKEN_HEREDOC)
+	{
+		if (contains_quote(redir->target))
+			redir->type = TOKEN_HEREDOC_QUOTED;
+		return (expand_word_without_env(redir->target));
+	}
+	return (expand_word(redir->target, shell));
+}
+
 static int	expand_redirs(t_cmd *cmd, t_shell *shell)
 {
 	t_redir	*redir;
@@ -56,21 +67,10 @@ static int	expand_redirs(t_cmd *cmd, t_shell *shell)
 	while (redir)
 	{
 		old_str = redir->target;
-		if (redir->type == TOKEN_HEREDOC)
-		{
-			if (contains_quote(old_str))
-				redir->type = TOKEN_HEREDOC_QUOTED;
-			new_str = expand_word_without_env(old_str);
-		}
-		else
-			new_str = expand_word(old_str, shell);
+		new_str = expand_redir_target(redir, shell);
 		if (!new_str)
 			return (0);
-		if (old_str)
-		{
-			free(old_str);
-			old_str = NULL;
-		}
+		free(old_str);
 		redir->target = new_str;
 		redir = redir->next;
 	}

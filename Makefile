@@ -33,10 +33,14 @@ SRCS = \
 	src/helper/prompt_validator.c	\
 	src/lexer/token_node_utils.c 	\
 	src/lexer/operator.c 			\
+	src/lexer/read_token_operator.c \
 	src/lexer/readline.c			\
 	src/lexer/tokenizer.c 			\
 	src/parser/redir_node_utils.c	\
 	src/parser/cmd_node_utils.c 	\
+	src/parser/expand_tilde.c 		\
+	src/parser/expand_helper.c 		\
+	src/parser/expand_word_without_env.c \
 	src/parser/parser.c 			\
 	src/parser/expand_word.c 		\
 	src/parser/expand_variable.c 	\

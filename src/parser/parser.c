@@ -6,7 +6,7 @@
 /*   By: jatansil <jatansil@42mail.sutd.edu.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/01 17:08:31 by jatansil          #+#    #+#             */
-/*   Updated: 2026/10/01 17:11:05 by jatansil         ###   ########.fr       */
+/*   Updated: 2026/10/08 14:00:25 by jatansil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,10 @@ int	validate_syntax(t_token *tokens)
 	return (1);
 }
 
-int parse_command(t_token **tokens, t_cmd *cmd)
+int	parse_command(t_token **tokens, t_cmd *cmd)
 {
-	t_token *current;
-	t_redir *new_redir;
+	t_token	*current;
+	t_redir	*new_redir;
 
 	if (!*tokens || !cmd)
 		return (0);
@@ -78,27 +78,25 @@ int parse_command(t_token **tokens, t_cmd *cmd)
 	return (1);
 }
 
-t_cmd *parse_token(t_token *tokens)
+t_cmd	*parse_token(t_token *tokens)
 {
-	t_cmd *head_cmd;
-	t_cmd *new_cmd;
+	t_cmd	*head_cmd;
+	t_cmd	*new_cmd;
 
 	if (!tokens)
-	return (NULL);
+		return (NULL);
 	head_cmd = NULL;
 	while (tokens)
 	{
 		new_cmd = cmd_new();
 		if (!new_cmd)
 		{
-			clean_up_cmd(new_cmd);
 			clean_up_cmd(head_cmd);
 			return (NULL);
 		}
 		if (!parse_command(&tokens, new_cmd))
 		{
 			clean_up_cmd(head_cmd);
-			clean_up_cmd(new_cmd);
 			return (NULL);
 		}
 		cmd_add_back(&head_cmd, new_cmd);

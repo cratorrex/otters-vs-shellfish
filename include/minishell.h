@@ -95,6 +95,7 @@ typedef struct s_shell
 # include "msh_exec.h"
 # include "msh_builtins.h"
 
+/* src/lexer */
 /* readline.c */
 char			*rl_gets(void);
 void			free_line_buffer(char **line_buffer);
@@ -122,6 +123,10 @@ int				cmd_add_args(char *value, t_cmd *cmd);
 /* operator.c */
 t_token_type	classify_operator(char *line);
 
+/* read_token_operator.c */
+char	*read_token(char *line, int *i);
+char	*read_operator(char *line, int *i);
+
 /* tokenizer.c */
 t_token			*tokenizer(char *line_read);
 
@@ -141,6 +146,11 @@ int				search_variable(char **existing_env, char *target_var);
 /* expander.c */
 char			*get_env_key(char *var);
 char			*get_env_value(char *name, char **envp);
+char	*append_char(char *result, char c);
+char	*append_string(char *result, char *str);
+int	handle_quote(char c, int *single_quote, int *double_quote);
+int	append_expanded_char(char **result, char c);
+char	*expand_tilde(char *home, int *i, char slash);
 char			*expand_variable(char *str, int *i, t_shell *shell);
 char			*expand_word(char *str, t_shell *shell);
 char			*expand_word_without_env(char *str);
