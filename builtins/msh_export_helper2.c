@@ -10,6 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minishell.h"
+
 void	print_export_variable(char *var)
 {
 	char	*equal;
