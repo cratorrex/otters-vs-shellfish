@@ -16,7 +16,7 @@
 
 #  include "minishell.h"
 
-int	    msh_echo(t_shell *shell, char **av);
+int		msh_echo(t_shell *shell, char **av);
 int		msh_pwd(void);
 int		msh_cd(t_shell *shell, char **av);
 int		msh_export(t_shell *shell, char **av);
@@ -29,6 +29,7 @@ int		cd_update_env(t_shell *shell, char *oldpwd, char *newpwd);
 int		cd_change_dir(t_shell *shell, char *path, int print_path);
 void	free_env(char **env);
 int		print_export(char **env);
+void	print_export_variable(char *var);
 
 # endif
 #endif

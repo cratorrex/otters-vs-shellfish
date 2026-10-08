@@ -13,8 +13,8 @@
 # include <errno.h>
 # include <fcntl.h>
 # include <dirent.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+# include <sys/types.h>
+# include <sys/wait.h>
 
 # include "msh_signal.h"
 
@@ -86,10 +86,10 @@ typedef enum e_error_code
 
 typedef struct s_shell
 {
-	char	**env;
-	int		exit_status;
-	int		should_exit;
-	struct s_cmd *cmds;
+	char			**env;
+	int				exit_status;
+	int				should_exit;
+	struct s_cmd	*cmds;
 }	t_shell;
 
 # include "msh_exec.h"
@@ -124,8 +124,8 @@ int				cmd_add_args(char *value, t_cmd *cmd);
 t_token_type	classify_operator(char *line);
 
 /* read_token_operator.c */
-char	*read_token(char *line, int *i);
-char	*read_operator(char *line, int *i);
+char			*read_token(char *line, int *i);
+char			*read_operator(char *line, int *i);
 
 /* tokenizer.c */
 t_token			*tokenizer(char *line_read);
@@ -136,8 +136,8 @@ t_cmd			*parse_token(t_token *tokens);
 
 /* environment_variable.c */
 char			**init_env_variable(char **envp);
-char	**freed_up_env(int index, char **env);
-void	freed_up_existing_env(char **existing_env);
+char			**freed_up_env(int index, char **env);
+void			freed_up_existing_env(char **existing_env);
 char			**add_new_variable(char **existing_env, char *new_var);
 char			**remove_variable(char **existing_env, char *var);
 char			**update_variable(char **existing_env, char *var);
@@ -149,11 +149,11 @@ int				search_variable(char **existing_env, char *target_var);
 /* expander.c */
 char			*get_env_key(char *var);
 char			*get_env_value(char *name, char **envp);
-char	*append_char(char *result, char c);
-char	*append_string(char *result, char *str);
-int	handle_quote(char c, int *single_quote, int *double_quote);
-int	append_expanded_char(char **result, char c);
-char	*expand_tilde(char *home, int *i, char slash);
+char			*append_char(char *result, char c);
+char			*append_string(char *result, char *str);
+int				handle_quote(char c, int *single_quote, int *double_quote);
+int				append_expanded_char(char **result, char c);
+char			*expand_tilde(char *home, int *i, char slash);
 char			*expand_variable(char *str, int *i, t_shell *shell);
 char			*expand_word(char *str, t_shell *shell);
 char			*expand_word_without_env(char *str);

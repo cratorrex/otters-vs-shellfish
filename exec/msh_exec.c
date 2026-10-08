@@ -14,8 +14,8 @@
 
 int	mexec_isbuiltin(t_cmd *cmd, t_shell *shell)
 {
-	long status;
-	int builtin;
+	long	status;
+	int		builtin;
 
 	status = 0;
 	builtin = is_builtin_cmd(cmd->av[0]);
@@ -44,6 +44,6 @@ int	execute_command(t_cmd *cmd, t_shell *shell)
 	shell->cmds = cmd;
 	if (!cmd->next && cmd->av && cmd->av[0]
 		&& is_builtin_cmd(cmd->av[0]) != UNKNOWN_CMD)
-			return (execute_single_builtin(cmd, shell));
+		return (execute_single_builtin(cmd, shell));
 	return (execute_pipeline(cmd, shell));
 }

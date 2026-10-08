@@ -112,16 +112,11 @@ int	msh_export(t_shell *shell, char **av)
 		valid = isvalid_export_arg(av[i]);
 		if (valid == 0)
 			status = 1;
-		else if (valid == 1)
-		{
-			if (export_one_variable(shell, av[i]))
-				status = 1;
-		}
+		else if (valid == 1 && export_one_variable(shell, av[i]))
+			status = 1;
 		else if (valid == 2)
-		{
 			if (export_key_only(shell, av[i]))
 				status = 1;
-		}
 		i++;
 	}
 	return (status);

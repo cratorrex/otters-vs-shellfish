@@ -47,7 +47,8 @@ static int	mcd_check_fx_ok(char *dir)
 	DIR	*directory;
 
 	if (access(dir, F_OK) == -1)
-		return (printf("msh: cd: %s:", dir),
+		return (ft_putstr_fd("msh: cd: ", 1),
+			ft_putstr_fd(dir, 1), ft_putstr_fd(":", 1),
 			ft_putstr_fd(" No such file or directory\n", 2), 1);
 	directory = opendir(dir);
 	if (!directory)

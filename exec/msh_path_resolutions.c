@@ -68,7 +68,7 @@ char	*resolve_command_path(char *cmd0, char **env)
 	return (NULL);
 }
 
-void clean_up_invalid_command(t_executor *exec, t_cmd *cmd)
+void	clean_up_invalid_command(t_executor *exec, t_cmd *cmd)
 {
 	clean_up_cmd(cmd);
 	clean_up_shell(exec->shell);

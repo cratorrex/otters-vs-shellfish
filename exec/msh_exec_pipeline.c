@@ -39,6 +39,7 @@ int	wait_for_children(t_executor *exec, t_shell *shell)
 	shell->exit_status = last_status;
 	return (last_status);
 }
+
 void	cleanup_child(t_cmd *cmd, t_executor *exec)
 {
 	clean_up_cmd(cmd);
@@ -58,7 +59,7 @@ void	close_executor_fds(t_executor *exec)
 
 void	child_execute(t_cmd *cmd, t_executor *exec, int has_next)
 {
-	int status;
+	int	status;
 
 	if (setup_child_pipe_fds(exec->prev_read_fd, exec->pipe_fd, has_next) == -1)
 		exit(1);
@@ -90,7 +91,6 @@ static int	cleanup_failed_pipeline(t_executor *exec, t_shell *shell)
 	return (1);
 }
 
-
 static int	init_exec(t_executor *exec, t_cmd *cmd, t_shell *shell)
 {
 	exec->cmd_count = count_commands(cmd);
@@ -109,7 +109,7 @@ static int	init_exec(t_executor *exec, t_cmd *cmd, t_shell *shell)
 	return (0);
 }
 
-static pid_t	fork_command(t_cmd *current,t_executor *exec,
+static pid_t	fork_command(t_cmd *current, t_executor *exec,
 				int has_next)
 {
 	pid_t	pid;

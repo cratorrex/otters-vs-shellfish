@@ -91,31 +91,6 @@ static void	sort_export_env(char **env)
 	}
 }
 
-static void	print_export_variable(char *var)
-{
-	char	*equal;
-
-	equal = ft_strchr(var, '=');
-	if (!equal)
-	{
-		printf("declare -x %s\n", var);
-		return ;
-	}
-	printf("declare -x ");
-	printf("%.*s", (int)(equal - var), var);
-	printf("=\"%s\"\n", equal + 1);
-}
-
-void	free_env(char **env)
-{
-	int	i;
-
-	i = 0;
-	while (env[i])
-		free(env[i++]);
-	free(env);
-}
-
 int	print_export(char **env)
 {
 	char	**copy;
