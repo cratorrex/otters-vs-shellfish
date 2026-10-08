@@ -45,8 +45,10 @@ SRCS = \
 	src/parser/expand_word.c 		\
 	src/parser/expand_variable.c 	\
 	src/parser/expand_command.c 	\
-	src/environment_variable.c \
-	src/debug_functions.c		\
+	src/get_env_key.c 				\
+	src/remove_variable.c 			\
+	src/environment_variable.c 		\
+	src/print_env.c					\
 	src/cleaner.c				\
 	src/builtin_validator.c		\
 	src/minishell.c 
