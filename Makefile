@@ -19,6 +19,7 @@ SRCS = \
 	builtins/msh_unset.c 			\
 	builtins/msh_cd_helper.c 		\
 	builtins/msh_export_helper.c 	\
+	builtins/msh_export_helper2.c	\
 	exec/msh_exec.c					\
 	exec/msh_pxheredoc.c			\
 	exec/msh_exec_builtins.c		\
