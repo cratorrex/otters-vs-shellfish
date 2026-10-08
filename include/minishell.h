@@ -145,7 +145,6 @@ int				get_target_variable_index(char **existing_env,\
 				char *target_var);
 int				search_variable(char **existing_env, char *target_var);
 
-
 /* expander.c */
 char			*get_env_key(char *var);
 char			*get_env_value(char *name, char **envp);
