@@ -61,10 +61,15 @@ void	child_execute(t_cmd *cmd, t_executor *exec, int has_next)
 {
 	int	status;
 
+	signal(SIGINT, SIG_DFL);
 	if (setup_child_pipe_fds(exec->prev_read_fd, exec->pipe_fd, has_next) == -1)
 		exit(1);
 	if (setup_redirections(cmd->redirs, exec->shell) == -1)
+	{
+		if (exec->shell->exit_status == 130)
+			exit(130);
 		exit(1);
+	}
 	if (!cmd->av || !cmd->av[0])
 		exit(0);
 	if (is_builtin_cmd(cmd->av[0]) != UNKNOWN_CMD)
@@ -130,10 +135,12 @@ int	execute_pipeline(t_cmd *cmd, t_shell *shell)
 	t_executor	exec;
 	t_cmd		*current;
 	pid_t		pid;
+	void		(*old_sigint)(int);
 	int			has_next;
 
 	if (init_exec(&exec, cmd, shell))
 		return (1);
+	old_sigint = signal(SIGINT, SIG_IGN);
 	current = cmd;
 	while (current)
 	{
@@ -149,8 +156,14 @@ int	execute_pipeline(t_cmd *cmd, t_shell *shell)
 	}
 	close_executor_fds(&exec);
 	if (current)
+	{
+		if (old_sigint != SIG_ERR)
+			signal(SIGINT, old_sigint);
 		return (cleanup_failed_pipeline(&exec, shell));
+	}
 	wait_for_children(&exec, shell);
+	if (old_sigint != SIG_ERR)
+		signal(SIGINT, old_sigint);
 	free(exec.pids);
 	return (shell->exit_status);
 }

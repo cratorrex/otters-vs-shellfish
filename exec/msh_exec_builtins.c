@@ -26,7 +26,12 @@ int	execute_single_builtin(t_cmd *cmd, t_shell *shell)
 	}
 	status = 0;
 	if (setup_redirections(cmd->redirs, shell) == -1)
-		status = 1;
+	{
+		if (shell->exit_status == 130)
+			status = 130;
+		else
+			status = 1;
+	}
 	else
 		status = execute_builtin(cmd, shell);
 	if (restore_standard_fds(saved_stdin, saved_stdout) == -1)

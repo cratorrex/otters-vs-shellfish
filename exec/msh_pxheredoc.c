@@ -12,6 +12,19 @@
 
 #include "minishell.h"
 
+extern int	rl_done;
+extern int	rl_catch_signals;
+
+static volatile sig_atomic_t	g_heredoc_interrupted;
+
+static void	heredoc_sigint(int sig)
+{
+	(void)sig;
+	g_heredoc_interrupted = 1;
+	rl_done = 1;
+	write(STDOUT_FILENO, "\n", 1);
+}
+
 static char	*append_text(char *result, const char *text)
 {
 	char	*joined;
@@ -87,38 +100,26 @@ static int	line_matches_delimiter(char *line, const char *delimiter)
 		&& ft_strncmp(line, delimiter, delimiter_len) == 0);
 }
 
-static int	create_heredoc_temp_fd(void)
+static int	create_heredoc_temp_fd(char **path)
 {
 	static unsigned int	counter;
-	char				*pid_text;
 	char				*count_text;
 	char				*name;
 	int					fd;
 
 	while (1)
 	{
-		pid_text = ft_itoa((int)getpid());
 		count_text = ft_itoa((int)counter++);
-		if (!pid_text || !count_text)
-			return (free(pid_text), free(count_text), -1);
-		name = ft_strjoin(".msh_heredoc_", pid_text);
-		free(pid_text);
-		if (!name)
-			return (free(count_text), -1);
-		pid_text = ft_strjoin(name, "_");
-		free(name);
-		if (!pid_text)
-			return (free(count_text), -1);
-		name = ft_strjoin(pid_text, count_text);
-		free(pid_text);
+		if (!count_text)
+			return (-1);
+		name = ft_strjoin(".msh_heredoc_", count_text);
 		free(count_text);
 		if (!name)
 			return (-1);
-		fd = open(name, O_CREAT | O_EXCL | O_RDWR, 0600);
+		fd = open(name, O_CREAT | O_EXCL | O_WRONLY, 0600);
 		if (fd >= 0)
 		{
-			unlink(name);
-			free(name);
+			*path = name;
 			return (fd);
 		}
 		free(name);
@@ -128,7 +129,7 @@ static int	create_heredoc_temp_fd(void)
 }
 
 /*
- * Returns a readable, rewound FD on success, or -1 on failure.
+ * Returns a readable FD positioned at the start, or -1 on failure.
  * expand_content is 0 when the delimiter was quoted, 1 otherwise.
  * The caller owns the returned FD and must close it after dup2().
  */
@@ -137,16 +138,38 @@ int	create_heredoc_fd(const char *delimiter, int expand_content,
 {
 	char	*line;
 	char	*content;
+	char	*line_with_newline;
+	char	*path;
+	void	(*old_sigint)(int);
+	int		old_catch_signals;
 	int		fd;
+	int		read_fd;
 
 	if (!delimiter || !shell)
 		return (-1);
-	fd = create_heredoc_temp_fd();
+	path = NULL;
+	fd = create_heredoc_temp_fd(&path);
 	if (fd == -1)
 		return (perror("minishell: heredoc"), -1);
+	g_heredoc_interrupted = 0;
+	old_catch_signals = rl_catch_signals;
+	rl_catch_signals = 0;
+	old_sigint = signal(SIGINT, heredoc_sigint);
 	while (1)
 	{
-		line = get_next_line(STDIN_FILENO);
+		line = readline("");
+		if (g_heredoc_interrupted)
+		{
+			free(line);
+			close(fd);
+			unlink(path);
+			free(path);
+			if (old_sigint != SIG_ERR)
+				signal(SIGINT, old_sigint);
+			rl_catch_signals = old_catch_signals;
+			shell->exit_status = 130;
+			return (-1);
+		}
 		if (!line)
 		{
 			ft_putstr_fd("minishell: warning: here-document ended by EOF\n",
@@ -154,25 +177,52 @@ int	create_heredoc_fd(const char *delimiter, int expand_content,
 			break ;
 		}
 		if (line_matches_delimiter(line, delimiter))
-			return (free(line), lseek(fd, 0, SEEK_SET), fd);
+		{
+			free(line);
+			break ;
+		}
 		content = line;
 		if (expand_content)
 		{
 			content = expand_heredoc_line(line, shell);
 			free(line);
 			if (!content)
-				return (close(fd), -1);
+			{
+				close(fd);
+				unlink(path);
+				free(path);
+				if (old_sigint != SIG_ERR)
+					signal(SIGINT, old_sigint);
+				rl_catch_signals = old_catch_signals;
+				return (-1);
+			}
 		}
-		if (write_all(fd, content) == -1)
+		line_with_newline = ft_strjoin(content, "\n");
+		if (!line_with_newline || write_all(fd, line_with_newline) == -1)
 		{
 			perror("minishell: heredoc write");
+			free(line_with_newline);
 			free(content);
 			close(fd);
+			unlink(path);
+			free(path);
+			if (old_sigint != SIG_ERR)
+				signal(SIGINT, old_sigint);
+			rl_catch_signals = old_catch_signals;
 			return (-1);
 		}
+		free(line_with_newline);
 		free(content);
 	}
-	if (lseek(fd, 0, SEEK_SET) == -1)
-		return (perror("minishell: heredoc seek"), close(fd), -1);
-	return (fd);
+	if (old_sigint != SIG_ERR)
+		signal(SIGINT, old_sigint);
+	rl_catch_signals = old_catch_signals;
+	close(fd);
+	read_fd = open(path, O_RDONLY);
+	if (read_fd == -1)
+		perror("minishell: heredoc reopen");
+	if (unlink(path) == -1 && read_fd >= 0)
+		perror("minishell: heredoc unlink");
+	free(path);
+	return (read_fd);
 }

@@ -64,17 +64,10 @@ int	setup_heredoc_redirection(t_redir *redir, t_shell *shell)
 {
 	int	fd;
 
-	/*
-	 * This call assumes msh_pxheredoc() has been refactored to accept
-	 * t_shell * and to return a readable FD, or -1 on failure.
-	 */
 	fd = create_heredoc_fd(redir->target,
-			redir->type == TOKEN_HEREDOC_QUOTED, shell);
+			redir->type == TOKEN_HEREDOC, shell);
 	if (fd == -1)
-	{
-		perror("minishell: heredoc");
 		return (-1);
-	}
 	if (dup2(fd, STDIN_FILENO) == -1)
 	{
 		perror("minishell: dup2");
