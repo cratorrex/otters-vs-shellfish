@@ -41,7 +41,9 @@ static int	isvalid_export_arg(char *arg)
 		return (0);
 	if (!isvalid_key_identifier(key))
 	{
-		printf("msh: export: `%s':", arg);
+		ft_putstr_fd("msh: export: `", 1);
+		ft_putstr_fd(arg, 1);
+		ft_putstr_fd("':", 1);
 		ft_putstr_fd(" not a valid identifier\n", 2);
 		free(key);
 		return (0);

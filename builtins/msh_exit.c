@@ -63,7 +63,7 @@ long	msh_exit(t_shell *shell, char **av)
 		return (2);
 	}
 	if (argc > 2)
-		return (printf("minishell: exit:"),
+		return (ft_putstr_fd("minishell: exit:", 1),
 			ft_putstr_fd(" too many arguments\n", 2), 1);
 	status = ft_atol(av[1]);
 	shell->should_exit = 1;
