@@ -51,10 +51,13 @@ static int	process_line(t_shell *shell, char *line)
 	t_token	*tokens;
 	t_cmd	*cmd;
 
-	tokens = tokenizer(line);
+	tokens = tokenizer(line, shell);
 	if (!tokens)
 	{
-		shell->exit_status = 2;
+		if (shell->exit_status == 1)
+			shell->exit_status = 0;
+		else
+			shell->exit_status = 2;
 		return (1);
 	}
 	if (!validate_syntax(tokens))

@@ -128,7 +128,7 @@ char			*read_token(char *line, int *i);
 char			*read_operator(char *line, int *i);
 
 /* tokenizer.c */
-t_token			*tokenizer(char *line_read);
+t_token			*tokenizer(char *line_read, t_shell *shell);
 
 /* parser.c */
 int				validate_syntax(t_token *tokens);
