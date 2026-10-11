@@ -16,8 +16,6 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 
-# include "msh_signal.h"
-
 typedef enum e_quote_state
 {
 	QUOTE_SINGLE,
