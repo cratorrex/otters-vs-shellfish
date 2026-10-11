@@ -54,6 +54,7 @@ typedef struct s_redir
 {
 	t_token_type	type;
 	char			*target;
+	int				heredoc_fd;
 	struct s_redir	*next;
 }	t_redir;
 
@@ -94,6 +95,8 @@ typedef struct s_shell
 
 # include "msh_exec.h"
 # include "msh_builtins.h"
+
+void	handle_sigint(int sig);
 
 /* src/lexer */
 /* readline.c */

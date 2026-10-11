@@ -37,6 +37,8 @@ int				setup_input_redirection(char *target);
 int				setup_output_redirection(char *target);
 int				setup_append_redirection(char *target);
 int				setup_heredoc_redirection(t_redir *redir, t_shell *shell);
+int				collect_command_heredocs(t_cmd *cmd, t_shell *shell);
+int				close_prepared_heredocs(t_cmd *cmd);
 int				restore_standard_fds(int saved_stdin, int saved_stdout);
 int				execute_builtin(t_cmd *cmd, t_shell *shell);
 char			*resolve_command_path(char *cmd0, char **env);

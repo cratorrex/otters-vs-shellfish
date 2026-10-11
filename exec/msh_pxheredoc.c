@@ -11,9 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-extern int	rl_done;
-extern int	rl_catch_signals;
+#include <unistd.h>
 
 static volatile sig_atomic_t	g_heredoc_interrupted;
 
@@ -21,7 +19,6 @@ static void	heredoc_sigint(int sig)
 {
 	(void)sig;
 	g_heredoc_interrupted = 1;
-	rl_done = 1;
 	write(STDOUT_FILENO, "\n", 1);
 }
 
@@ -34,10 +31,35 @@ static char	*append_text(char *result, const char *text)
 	return (joined);
 }
 
+static char	*append_expanded_variable(char *result, char *line, int *i,
+		t_shell *shell)
+{
+	char	*expanded;
+
+	expanded = expand_variable(line, i, shell);
+	if (!expanded)
+		return (free(result), NULL);
+	result = append_text(result, expanded);
+	free(expanded);
+	return (result);
+}
+
+static char	*append_heredoc_char(char *result, char *line, int *i)
+{
+	char	*character;
+
+	character = ft_substr(line, *i, 1);
+	if (!character)
+		return (free(result), NULL);
+	result = append_text(result, character);
+	free(character);
+	(*i)++;
+	return (result);
+}
+
 static char	*expand_heredoc_line(char *line, t_shell *shell)
 {
 	char	*result;
-	char	*expanded;
 	int		i;
 
 	result = ft_strdup("");
@@ -47,22 +69,9 @@ static char	*expand_heredoc_line(char *line, t_shell *shell)
 	while (line[i])
 	{
 		if (line[i] == '$')
-		{
-			expanded = expand_variable(line, &i, shell);
-			if (!expanded)
-				return (free(result), NULL);
-			result = append_text(result, expanded);
-			free(expanded);
-		}
+			result = append_expanded_variable(result, line, &i, shell);
 		else
-		{
-			expanded = ft_substr(line, i, 1);
-			if (!expanded)
-				return (free(result), NULL);
-			result = append_text(result, expanded);
-			free(expanded);
-			i++;
-		}
+			result = append_heredoc_char(result, line, &i);
 		if (!result)
 			return (NULL);
 	}
@@ -100,50 +109,182 @@ static int	line_matches_delimiter(char *line, const char *delimiter)
 		&& ft_strncmp(line, delimiter, delimiter_len) == 0);
 }
 
+static char	*heredoc_temp_name(unsigned int counter)
+{
+	char	*count_text;
+	char	*name;
+
+	count_text = ft_itoa((int)counter);
+	if (!count_text)
+		return (NULL);
+	name = ft_strjoin(".msh_heredoc_", count_text);
+	free(count_text);
+	return (name);
+}
+
 static int	create_heredoc_temp_fd(char **path)
 {
 	static unsigned int	counter;
-	char				*count_text;
 	char				*name;
 	int					fd;
 
 	while (1)
 	{
-		count_text = ft_itoa((int)counter++);
-		if (!count_text)
-			return (-1);
-		name = ft_strjoin(".msh_heredoc_", count_text);
-		free(count_text);
+		name = heredoc_temp_name(counter++);
 		if (!name)
 			return (-1);
 		fd = open(name, O_CREAT | O_EXCL | O_WRONLY, 0600);
 		if (fd >= 0)
-		{
-			*path = name;
-			return (fd);
-		}
+			return (*path = name, fd);
 		free(name);
 		if (errno != EEXIST)
 			return (-1);
 	}
 }
 
-/*
- * Returns a readable FD positioned at the start, or -1 on failure.
- * expand_content is 0 when the delimiter was quoted, 1 otherwise.
- * The caller owns the returned FD and must close it after dup2().
- */
+static int	start_heredoc_signal(struct sigaction *old_action)
+{
+	struct sigaction	action;
+
+	action.sa_handler = heredoc_sigint;
+	sigemptyset(&action.sa_mask);
+	action.sa_flags = 0;
+	return (sigaction(SIGINT, &action, old_action));
+}
+
+static int	end_heredoc_signal(struct sigaction *old_action)
+{
+	if (sigaction(SIGINT, old_action, NULL) == -1)
+	{
+		perror("minishell: sigaction");
+		return (-1);
+	}
+	return (0);
+}
+
+static int	append_read_character(char **line, size_t *length, char character)
+{
+	char	*grown;
+
+	grown = realloc(*line, *length + 2);
+	if (!grown)
+		return (-1);
+	*line = grown;
+	(*line)[(*length)++] = character;
+	(*line)[*length] = '\0';
+	return (0);
+}
+
+static char	*read_heredoc_line(void)
+{
+	char	*line;
+	char	character;
+	size_t	length;
+	ssize_t	bytes;
+
+	line = malloc(1);
+	if (!line)
+		return (NULL);
+	line[0] = '\0';
+	length = 0;
+	while (1)
+	{
+		bytes = read(STDIN_FILENO, &character, 1);
+		if (bytes <= 0 || character == '\n')
+			break ;
+		if (append_read_character(&line, &length, character) == -1)
+			return (free(line), NULL);
+	}
+	if (bytes == -1 || (bytes == 0 && length == 0))
+		return (free(line), NULL);
+	return (line);
+}
+
+static int	store_heredoc_line(char *line, int fd, int expand_content,
+		t_shell *shell)
+{
+	char	*content;
+	char	*with_newline;
+	int	status;
+
+	content = line;
+	if (expand_content)
+	{
+		content = expand_heredoc_line(line, shell);
+		free(line);
+		if (!content)
+			return (-1);
+	}
+	with_newline = ft_strjoin(content, "\n");
+	status = 0;
+	if (!with_newline || write_all(fd, with_newline) == -1)
+		status = -1;
+	if (status == -1)
+		perror("minishell: heredoc write");
+	free(with_newline);
+	free(content);
+	return (status);
+}
+
+static int	collect_heredoc_lines(int fd, const char *delimiter,
+		int expand_content, t_shell *shell)
+{
+	char	*line;
+	while (1)
+	{
+		write(STDOUT_FILENO, "> ", 2);
+		errno = 0;
+		line = read_heredoc_line();
+		if (g_heredoc_interrupted)
+			return (free(line), shell->exit_status = 130, -1);
+		if (!line)
+		{
+			if (errno != 0)
+				return (perror("minishell: heredoc read"), -1);
+			ft_putstr_fd("minishell: warning: here-document ended by EOF\n",
+				STDERR_FILENO);
+			return (0);
+		}
+		if (line_matches_delimiter(line, delimiter))
+			return (free(line), 0);
+		if (store_heredoc_line(line, fd, expand_content, shell) == -1)
+			return (-1);
+	}
+}
+
+static int	finish_heredoc_file(int fd, char *path, int failed)
+{
+	int	read_fd;
+
+	if (close(fd) == -1)
+	{
+		perror("minishell: close");
+		failed = 1;
+	}
+	if (failed)
+	{
+		if (unlink(path) == -1)
+			perror("minishell: heredoc unlink");
+		free(path);
+		return (-1);
+	}
+	read_fd = open(path, O_RDONLY);
+	if (read_fd == -1)
+		perror("minishell: heredoc reopen");
+	if (unlink(path) == -1)
+		perror("minishell: heredoc unlink");
+	free(path);
+	return (read_fd);
+}
+
+/* Returns a readable FD at its start; the caller owns and closes it. */
 int	create_heredoc_fd(const char *delimiter, int expand_content,
 		t_shell *shell)
 {
-	char	*line;
-	char	*content;
-	char	*line_with_newline;
 	char	*path;
-	void	(*old_sigint)(int);
-	int		old_catch_signals;
-	int		fd;
-	int		read_fd;
+	struct sigaction	old_action;
+	int	fd;
+	int	failed;
 
 	if (!delimiter || !shell)
 		return (-1);
@@ -152,77 +293,13 @@ int	create_heredoc_fd(const char *delimiter, int expand_content,
 	if (fd == -1)
 		return (perror("minishell: heredoc"), -1);
 	g_heredoc_interrupted = 0;
-	old_catch_signals = rl_catch_signals;
-	rl_catch_signals = 0;
-	old_sigint = signal(SIGINT, heredoc_sigint);
-	while (1)
+	if (start_heredoc_signal(&old_action) == -1)
 	{
-		line = readline("");
-		if (g_heredoc_interrupted)
-		{
-			free(line);
-			close(fd);
-			unlink(path);
-			free(path);
-			if (old_sigint != SIG_ERR)
-				signal(SIGINT, old_sigint);
-			rl_catch_signals = old_catch_signals;
-			shell->exit_status = 130;
-			return (-1);
-		}
-		if (!line)
-		{
-			ft_putstr_fd("minishell: warning: here-document ended by EOF\n",
-				STDERR_FILENO);
-			break ;
-		}
-		if (line_matches_delimiter(line, delimiter))
-		{
-			free(line);
-			break ;
-		}
-		content = line;
-		if (expand_content)
-		{
-			content = expand_heredoc_line(line, shell);
-			free(line);
-			if (!content)
-			{
-				close(fd);
-				unlink(path);
-				free(path);
-				if (old_sigint != SIG_ERR)
-					signal(SIGINT, old_sigint);
-				rl_catch_signals = old_catch_signals;
-				return (-1);
-			}
-		}
-		line_with_newline = ft_strjoin(content, "\n");
-		if (!line_with_newline || write_all(fd, line_with_newline) == -1)
-		{
-			perror("minishell: heredoc write");
-			free(line_with_newline);
-			free(content);
-			close(fd);
-			unlink(path);
-			free(path);
-			if (old_sigint != SIG_ERR)
-				signal(SIGINT, old_sigint);
-			rl_catch_signals = old_catch_signals;
-			return (-1);
-		}
-		free(line_with_newline);
-		free(content);
+		perror("minishell: sigaction");
+		return (finish_heredoc_file(fd, path, 1));
 	}
-	if (old_sigint != SIG_ERR)
-		signal(SIGINT, old_sigint);
-	rl_catch_signals = old_catch_signals;
-	close(fd);
-	read_fd = open(path, O_RDONLY);
-	if (read_fd == -1)
-		perror("minishell: heredoc reopen");
-	if (unlink(path) == -1 && read_fd >= 0)
-		perror("minishell: heredoc unlink");
-	free(path);
-	return (read_fd);
+	failed = (collect_heredoc_lines(fd, delimiter, expand_content, shell) == -1);
+	if (end_heredoc_signal(&old_action) == -1)
+		failed = 1;
+	return (finish_heredoc_file(fd, path, failed));
 }

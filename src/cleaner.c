@@ -34,6 +34,11 @@ void	clean_up_redirs(t_redir *redirs)
 	while (redirs)
 	{
 		tmp = redirs->next;
+		if (redirs->heredoc_fd >= 0)
+		{
+			if (close(redirs->heredoc_fd) == -1)
+				perror("minishell: close heredoc");
+		}
 		free(redirs->target);
 		free(redirs);
 		redirs = tmp;

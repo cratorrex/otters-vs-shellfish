@@ -81,6 +81,14 @@ static int	process_line(t_shell *shell, char *line)
 	}
 	if (tokens)
 		token_clear(&tokens);
+	if (collect_command_heredocs(cmd, shell) == -1)
+	{
+		clean_up_cmd(cmd);
+		token_clear(&tokens);
+		if (shell->exit_status != 130)
+			shell->exit_status = 1;
+		return (1);
+	}
 	execute_command(cmd, shell);
 	clean_up_cmd(cmd);
 	token_clear(&tokens);
@@ -155,6 +163,7 @@ int	main(int argc, char **av, char **envp)
 		return (1);
 	}
 	signal(SIGINT, handle_sigint);
+	// signal(SIGQUIT, SIG_IGN);
 	set_shell_level(&shell, get_env_value("SHLVL", shell.env));
 	shell_loop(&shell);
 	rl_clear_history();

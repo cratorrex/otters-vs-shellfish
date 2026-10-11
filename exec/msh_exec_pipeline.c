@@ -9,6 +9,13 @@ int	decode_wait_status(int wait_status)
 	return (1);
 }
 
+void	report_quit_status(int wait_status)
+{
+	if (!WIFSIGNALED(wait_status) || WTERMSIG(wait_status) != SIGQUIT)
+		return ;
+	ft_putstr_fd("Quit (core dumped)\n", STDERR_FILENO);
+}
+
 int	wait_for_children(t_executor *exec, t_shell *shell)
 {
 	size_t	i;
@@ -32,8 +39,12 @@ int	wait_for_children(t_executor *exec, t_shell *shell)
 			perror("minishell: waitpid");
 			last_status = 1;
 		}
-		else if (i == exec->cmd_count - 1)
-			last_status = decode_wait_status(wait_status);
+		else
+		{
+			// report_quit_status(wait_status);
+			if (i == exec->cmd_count - 1)
+				last_status = decode_wait_status(wait_status);
+		}
 		i++;
 	}
 	shell->exit_status = last_status;
@@ -63,13 +74,19 @@ void	child_execute(t_cmd *cmd, t_executor *exec, int has_next)
 
 	signal(SIGINT, SIG_DFL);
 	if (setup_child_pipe_fds(exec->prev_read_fd, exec->pipe_fd, has_next) == -1)
+	{
+		cleanup_child(exec->shell->cmds, exec);
 		exit(1);
+	}
 	if (setup_redirections(cmd->redirs, exec->shell) == -1)
 	{
+		cleanup_child(exec->shell->cmds, exec);
 		if (exec->shell->exit_status == 130)
 			exit(130);
 		exit(1);
 	}
+	if (close_prepared_heredocs(exec->shell->cmds) == -1)
+		exit(1);
 	if (!cmd->av || !cmd->av[0])
 		exit(0);
 	if (is_builtin_cmd(cmd->av[0]) != UNKNOWN_CMD)

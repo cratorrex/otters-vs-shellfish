@@ -26,6 +26,7 @@ t_redir	*redir_new(t_token_type type, char *target)
 		return (NULL);
 	}
 	node->type = type;
+	node->heredoc_fd = -1;
 	node->next = NULL;
 	return (node);
 }
