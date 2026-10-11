@@ -163,7 +163,7 @@ int	main(int argc, char **av, char **envp)
 		return (1);
 	}
 	signal(SIGINT, handle_sigint);
-	// signal(SIGQUIT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	set_shell_level(&shell, get_env_value("SHLVL", shell.env));
 	shell_loop(&shell);
 	rl_clear_history();

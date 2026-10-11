@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   msh_exec_helper.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jatansil <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/11 14:21:53 by jatansil          #+#    #+#             */
+/*   Updated: 2026/10/11 14:21:55 by jatansil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 size_t	count_commands(t_cmd *cmd)
@@ -23,10 +35,6 @@ int	create_pipe(int pipe_fd[2])
 	return (0);
 }
 
-/*
- * Child: connect inherited pipeline endpoints to stdin/stdout.
- * Close the original pipe descriptors after dup2().
- */
 int	setup_child_pipe_fds(int prev_read_fd, int pipe_fd[2],
 		int has_next)
 {
@@ -56,10 +64,6 @@ void	close_child_pipe_fds(int prev_read_fd, int pipe_fd[2])
 		close(pipe_fd[1]);
 }
 
-/*
- * Parent: close the previous read end and this pipe's write end.
- * Keep this pipe's read end for the next command.
- */
 void	close_parent_pipe_fds(t_executor *exec, int has_next)
 {
 	if (exec->prev_read_fd >= 0)

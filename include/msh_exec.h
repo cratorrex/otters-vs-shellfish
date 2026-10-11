@@ -24,7 +24,15 @@ typedef struct s_executor
 	size_t	launched;
 }	t_executor;
 
+static volatile sig_atomic_t	g_heredoc_interrupted;
+void	heredoc_sigint(int sig);
+int	start_heredoc_signal(struct sigaction *old_action);
+int	end_heredoc_signal(struct sigaction *old_action);
+
+
 int				mexec_isbuiltin(t_cmd *cmd, t_shell *shell);
+void	cleanup_child(t_cmd *cmd, t_executor *exec);
+int	cleanup_failed_pipeline(t_executor *exec, t_shell *shell);
 t_builtin_cmd	is_builtin_cmd(char *cmd);
 size_t			count_commands(t_cmd *cmd);
 int				create_pipe(int pipe_fd[2]);
@@ -32,6 +40,7 @@ int				setup_child_pipe_fds(int prev_read_fd,
 					int pipe_fd[2], int has_next);
 void			close_child_pipe_fds(int prev_read_fd, int pipe_fd[2]);
 void			close_parent_pipe_fds(t_executor *exec, int has_next);
+int	init_exec(t_executor *exec, t_cmd *cmd, t_shell *shell);
 int				setup_redirections(t_redir *redirs, t_shell *shell);
 int				setup_input_redirection(char *target);
 int				setup_output_redirection(char *target);
@@ -47,6 +56,11 @@ void			execute_external_command(t_cmd *cmd, t_executor *exec);
 int				wait_for_children(t_executor *exec, t_shell *shell);
 int				execute_single_builtin(t_cmd *cmd, t_shell *shell);
 int				execute_pipeline(t_cmd *cmd, t_shell *shell);
+char	*expand_heredoc_line(char *line, t_shell *shell);
+int	line_matches_delimiter(char *line, const char *delimiter);
+char	*read_heredoc_line(void);
+int	write_all(int fd, const char *text);
+int	create_heredoc_temp_fd(char **path);
 int				create_heredoc_fd(const char *delimiter,
 					int expand_content, t_shell *shell);
 int				execute_command(t_cmd *cmd, t_shell *shell);

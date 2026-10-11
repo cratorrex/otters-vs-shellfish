@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   msh_path_resolutions.c                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jatansil <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/11 14:22:27 by jatansil          #+#    #+#             */
+/*   Updated: 2026/10/11 14:22:44 by jatansil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 char	*get_path_value(char **env)
@@ -34,20 +46,12 @@ char	*join_path_command(char *directory, size_t dir_len, char *cmd0)
 	return (prefix);
 }
 
-char	*resolve_command_path(char *cmd0, char **env)
+char	*search_path_directories(char *path, char *cmd0)
 {
-	char	*path;
 	char	*candidate;
 	size_t	start;
 	size_t	end;
 
-	if (!cmd0 || !cmd0[0])
-		return (NULL);
-	if (ft_strchr(cmd0, '/'))
-		return (ft_strdup(cmd0));
-	path = get_path_value(env);
-	if (!path)
-		return (NULL);
 	start = 0;
 	while (1)
 	{
@@ -56,45 +60,30 @@ char	*resolve_command_path(char *cmd0, char **env)
 			end++;
 		candidate = join_path_command(path + start, end - start, cmd0);
 		if (!candidate)
-			return (free(path), NULL);
+			return (NULL);
 		if (access(candidate, F_OK) == 0)
-			return (free(path), candidate);
+			return (candidate);
 		free(candidate);
 		if (!path[end])
 			break ;
 		start = end + 1;
 	}
-	free(path);
 	return (NULL);
 }
 
-void	clean_up_invalid_command(t_executor *exec, t_cmd *cmd)
-{
-	clean_up_cmd(cmd);
-	clean_up_shell(exec->shell);
-	free(exec->pids);
-}
-
-void	execute_external_command(t_cmd *cmd, t_executor *exec)
+char	*resolve_command_path(char *cmd0, char **env)
 {
 	char	*path;
-	int		status;
+	char	*result;
 
-	path = resolve_command_path(cmd->av[0], exec->shell->env);
+	if (!cmd0 || !cmd0[0])
+		return (NULL);
+	if (ft_strchr(cmd0, '/'))
+		return (ft_strdup(cmd0));
+	path = get_path_value(env);
 	if (!path)
-	{
-		ft_putstr_fd("minishell: ", STDERR_FILENO);
-		ft_putstr_fd(cmd->av[0], STDERR_FILENO);
-		ft_putendl_fd(": command not found", STDERR_FILENO);
-		clean_up_invalid_command(exec, exec->shell->cmds);
-		exit(127);
-	}
-	execve(path, cmd->av, exec->shell->env);
-	perror(cmd->av[0]);
-	status = 126;
-	if (errno == ENOENT)
-		status = 127;
+		return (NULL);
+	result = search_path_directories(path, cmd0);
 	free(path);
-	clean_up_invalid_command(exec, exec->shell->cmds);
-	exit(status);
+	return (result);
 }

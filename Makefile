@@ -20,14 +20,18 @@ SRCS = \
 	builtins/msh_cd_helper.c 		\
 	builtins/msh_export_helper.c 	\
 	builtins/msh_export_helper2.c	\
+	exec/msh_signal.c 				\
+	exec/msh_exec_cleaner.c 		\
 	exec/msh_exec.c					\
+	exec/msh_pxheredoc_helper1.c	\
+	exec/msh_pxheredoc_helper2.c 	\
 	exec/msh_pxheredoc.c			\
 	exec/msh_exec_builtins.c		\
 	exec/msh_exec_helper.c 			\
 	exec/msh_exec_pipeline.c 		\
 	exec/msh_path_resolutions.c 	\
+	exec/msh_redirection_heredoc.c 	\
 	exec/msh_redirection.c 			\
-	signal/msh_signal.c 			\
 	src/helper/ft_strcmp.c 			\
 	src/helper/ft_atol.c 			\
 	src/helper/symbol_matcher.c 	\
