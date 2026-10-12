@@ -6,7 +6,7 @@
 /*   By: thtay <thtay@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/12 16:37:51 by thtay             #+#    #+#             */
-/*   Updated: 2026/10/12 16:37:53 by thtay            ###   ########.fr       */
+/*   Updated: 2026/10/12 21:56:13 by jatansil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,8 @@ typedef struct s_shell
 	int				should_exit;
 	struct s_cmd	*cmds;
 }	t_shell;
+
+extern volatile sig_atomic_t	g_heredoc_interrupted;
 
 # endif
 #endif

@@ -55,8 +55,9 @@ SRCS = \
 	src/remove_variable.c 			\
 	src/environment_variable.c 		\
 	src/print_env.c					\
-	src/cleaner.c				\
-	src/builtin_validator.c		\
+	src/cleaner.c					\
+	src/builtin_validator.c			\
+	src/shell.c						\
 	src/minishell.c 
 
 

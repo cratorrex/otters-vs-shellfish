@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jatansil <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/12 20:29:37 by jatansil          #+#    #+#             */
+/*   Updated: 2026/10/12 21:55:51 by jatansil         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 // # define _POSIX_C_SOURCE
@@ -15,163 +27,75 @@
 # include <dirent.h>
 # include <sys/types.h>
 # include <sys/wait.h>
-
-typedef enum e_quote_state
-{
-	QUOTE_SINGLE,
-	QUOTE_DOUBLE,
-	QUOTE_NONE
-}	t_quote_state;
-
-typedef enum e_lex_status
-{
-	LEX_OK,
-	LEX_MALLOC_ERROR,
-	LEX_UNCLOSED_QUOTE
-}	t_lex_status;
-
-typedef enum e_token_type
-{
-	TOKEN_WORD,
-	TOKEN_PIPE,
-	TOKEN_REDIR_IN,
-	TOKEN_REDIR_OUT,
-	TOKEN_APPEND,
-	TOKEN_HEREDOC,
-	TOKEN_HEREDOC_QUOTED
-}	t_token_type;
-
-typedef struct s_token
-{
-	t_token_type	type;
-	char			*value;
-	struct s_token	*next;
-}	t_token;
-
-typedef struct s_redir
-{
-	t_token_type	type;
-	char			*target;
-	int				heredoc_fd;
-	struct s_redir	*next;
-}	t_redir;
-
-typedef struct s_cmd
-{
-	char			**av;
-	t_redir			*redirs;
-	struct s_cmd	*next;
-}	t_cmd;
-
-typedef enum e_builtin_cmd
-{
-	ECHO,
-	CD,
-	PWD,
-	EXPORT,
-	UNSET,
-	ENV,
-	EXIT,
-	UNKNOWN_CMD
-}	t_builtin_cmd;
-
-typedef enum e_error_code
-{
-	SYNTAX_ERR,
-	CMD_NOT_FOUND_ERR,
-	UNCLOSED_BRACKET_ERR,
-	GENERIC_ERR
-}	t_error_code;
-
-typedef struct s_shell
-{
-	char			**env;
-	int				exit_status;
-	int				should_exit;
-	struct s_cmd	*cmds;
-}	t_shell;
-
+# include "msh_types.h"
 # include "msh_exec.h"
 # include "msh_builtins.h"
 
-void	handle_sigint(int sig);
+char					*rl_gets(void);
+void					free_line_buffer(char **line_buffer);
 
-/* src/lexer */
-/* readline.c */
-char			*rl_gets(void);
-void			free_line_buffer(char **line_buffer);
+int						isfound_space(char *line);
+int						is_delimiter(char c);
+int						is_operator(char c);
+int						is_redirection(t_token_type token_type);
 
-/* symbol_matcher */
-int				isfound_space(char *line);
-int				is_delimiter(char c);
-int				is_operator(char c);
-int				is_redirection(t_token_type token_type);
+t_token					*token_new(char *value, t_token_type type);
+void					token_add_back(t_token **lst, t_token *new);
+void					token_clear(t_token **lst);
 
-/* token_node_utils.c */
-t_token			*token_new(char *value, t_token_type type);
-void			token_add_back(t_token **lst, t_token *new);
-void			token_clear(t_token **lst);
+t_redir					*redir_new(t_token_type type, char *target);
+void					redir_add_back(t_redir **head, t_redir *new);
 
-/* redir_node_utils.c */
-t_redir			*redir_new(t_token_type type, char *target);
-void			redir_add_back(t_redir **head, t_redir *new);
+t_cmd					*cmd_new(void);
+void					cmd_add_back(t_cmd **head, t_cmd *new);
+int						cmd_add_args(char *value, t_cmd *cmd);
 
-/* cmd_node_utils.c */
-t_cmd			*cmd_new(void);
-void			cmd_add_back(t_cmd **head, t_cmd *new);
-int				cmd_add_args(char *value, t_cmd *cmd);
+t_token_type			classify_operator(char *line);
 
-/* operator.c */
-t_token_type	classify_operator(char *line);
+char					*read_token(char *line, int *i);
+char					*read_operator(char *line, int *i);
 
-/* read_token_operator.c */
-char			*read_token(char *line, int *i);
-char			*read_operator(char *line, int *i);
+t_token					*tokenizer(char *line_read, t_shell *shell);
 
-/* tokenizer.c */
-t_token			*tokenizer(char *line_read, t_shell *shell);
+int						validate_syntax(t_token *tokens);
+t_cmd					*parse_token(t_token *tokens);
 
-/* parser.c */
-int				validate_syntax(t_token *tokens);
-t_cmd			*parse_token(t_token *tokens);
+char					**init_env_variable(char **envp);
+char					**freed_up_env(int index, char **env);
+void					freed_up_existing_env(char **existing_env);
+char					**add_new_variable(char **existing_env, char *new_var);
+char					**remove_variable(char **existing_env, char *var);
+char					**update_variable(char **existing_env, char *var);
+int						get_target_variable_index(char **existing_env,\
+						char *target_var);
+int						search_variable(char **existing_env, char *target_var);
 
-/* environment_variable.c */
-char			**init_env_variable(char **envp);
-char			**freed_up_env(int index, char **env);
-void			freed_up_existing_env(char **existing_env);
-char			**add_new_variable(char **existing_env, char *new_var);
-char			**remove_variable(char **existing_env, char *var);
-char			**update_variable(char **existing_env, char *var);
-int				get_target_variable_index(char **existing_env,\
-				char *target_var);
-int				search_variable(char **existing_env, char *target_var);
+char					*get_env_key(char *var);
+char					*get_env_value(char *name, char **envp);
+char					*append_char(char *result, char c);
+char					*append_string(char *result, char *str);
+int						handle_quote(char c, int *single_quote,\
+						int *double_quote);
+int						append_expanded_char(char **result, char c);
+char					*expand_tilde(char *home, int *i, char slash);
+char					*expand_variable(char *str, int *i, t_shell *shell);
+char					*expand_word(char *str, t_shell *shell);
+char					*expand_word_without_env(char *str);
+int						expand_command(t_cmd *cmd, t_shell *shell);
 
-/* expander.c */
-char			*get_env_key(char *var);
-char			*get_env_value(char *name, char **envp);
-char			*append_char(char *result, char c);
-char			*append_string(char *result, char *str);
-int				handle_quote(char c, int *single_quote, int *double_quote);
-int				append_expanded_char(char **result, char c);
-char			*expand_tilde(char *home, int *i, char slash);
-char			*expand_variable(char *str, int *i, t_shell *shell);
-char			*expand_word(char *str, t_shell *shell);
-char			*expand_word_without_env(char *str);
-int				expand_command(t_cmd *cmd, t_shell *shell);
+void					print_env(char **env);
 
-/* debug_functions */
-void			print_env(char **env);
+int						init_shell(t_shell *shell, char **envp);
+void					set_shell_level(t_shell *shell, char *shlvl);
 
-/* cleaner.c */
-void			clean_up_arr_str(char **arr);
-void			clean_up_redirs(t_redir *redirs);
-void			clean_up_cmd(t_cmd *cmd);
-void			clean_up_shell(t_shell *shell);
+void					clean_up_arr_str(char **arr);
+void					clean_up_redirs(t_redir *redirs);
+void					clean_up_cmd(t_cmd *cmd);
+void					clean_up_shell(t_shell *shell);
 
-/* prompt_validator.c */
-int				is_empty_prompt(const char *line_read);
-int				is_only_space(const char *line_read);
+int						is_empty_prompt(const char *line_read);
+int						is_only_space(const char *line_read);
 
-long			ft_atol(const char *str);
+long					ft_atol(const char *str);
 
 #endif

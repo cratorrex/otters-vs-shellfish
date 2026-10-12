@@ -6,7 +6,7 @@
 /*   By: jatansil <jatansil@42mail.sutd.edu.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/01 16:09:09 by jatansil          #+#    #+#             */
-/*   Updated: 2026/10/01 16:13:30 by jatansil         ###   ########.fr       */
+/*   Updated: 2026/10/12 21:57:39 by jatansil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,60 +25,11 @@ getenv, tcsetattr, tcgetattr, tgetent, tgetflag,
 tgetnum, tgetstr, tgoto, tputs
 */
 
-void	handle_sigint(int sig)
-{
-	(void) sig;
-	write(STDOUT_FILENO, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-}
+volatile sig_atomic_t	g_heredoc_interrupted = 0;
 
-int	init_shell(t_shell *shell, char **envp)
+static int	process_parsed_command(t_cmd *cmd, t_token *tokens,
+		t_shell *shell)
 {
-	if (!shell || !envp)
-		return (0);
-	shell->env = init_env_variable(envp);
-	if (!shell->env)
-		return (0);
-	shell->exit_status = 0;
-	shell->should_exit = 0;
-	return (1);
-}
-
-static int	process_line(t_shell *shell, char *line)
-{
-	t_token	*tokens;
-	t_cmd	*cmd;
-
-	tokens = tokenizer(line, shell);
-	if (!tokens)
-	{
-		if (shell->exit_status == 1)
-			shell->exit_status = 0;
-		else
-			shell->exit_status = 2;
-		return (1);
-	}
-	if (!validate_syntax(tokens))
-	{
-		printf("minishell: syntax error\n");
-		shell->exit_status = 2;
-		token_clear(&tokens);
-		return (1);
-	}
-	cmd = parse_token(tokens);
-	if (!cmd)
-	{
-		token_clear(&tokens);
-		return (0);
-	}
-	if (!expand_command(cmd, shell))
-	{
-		clean_up_cmd(cmd);
-		token_clear(&tokens);
-		return (0);
-	}
 	if (tokens)
 		token_clear(&tokens);
 	if (collect_command_heredocs(cmd, shell) == -1)
@@ -93,6 +44,41 @@ static int	process_line(t_shell *shell, char *line)
 	clean_up_cmd(cmd);
 	token_clear(&tokens);
 	return (1);
+}
+
+static int	handle_empty_tokens(t_shell *shell)
+{
+	if (shell->exit_status == 1)
+		shell->exit_status = 0;
+	else
+		shell->exit_status = 2;
+	return (1);
+}
+
+static int	process_line(t_shell *shell, char *line)
+{
+	t_token	*tokens;
+	t_cmd	*cmd;
+
+	tokens = tokenizer(line, shell);
+	if (!tokens)
+		return (handle_empty_tokens(shell));
+	if (!validate_syntax(tokens))
+	{
+		printf("minishell: syntax error\n");
+		shell->exit_status = 2;
+		token_clear(&tokens);
+		return (1);
+	}
+	cmd = parse_token(tokens);
+	if (!cmd)
+		return (token_clear(&tokens), 0);
+	if (!expand_command(cmd, shell))
+	{
+		clean_up_cmd(cmd);
+		return (token_clear(&tokens), 0);
+	}
+	return (process_parsed_command(cmd, tokens, shell));
 }
 
 void	shell_loop(t_shell *shell)
@@ -120,31 +106,6 @@ void	shell_loop(t_shell *shell)
 		}
 		free_line_buffer(&line);
 	}
-}
-
-static void	set_shell_level(t_shell *shell, char *shlvl)
-{
-	int		lvl;
-	char	**av;
-	char	*res;
-	int		i;
-
-	lvl = ft_atoi(shlvl);
-	free(shlvl);
-	lvl ++;
-	shlvl = ft_itoa(lvl);
-	res = ft_strjoin("export SHLVL=", shlvl);
-	av = ft_split(res, ' ');
-	msh_export(shell, av);
-	free(res);
-	i = 0;
-	while (av[i])
-	{
-		free(av[i]);
-		i++;
-	}
-	free(av);
-	free(shlvl);
 }
 
 int	main(int argc, char **av, char **envp)
