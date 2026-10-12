@@ -16,7 +16,7 @@ char	*rl_gets(void)
 {
 	char	*line_read;
 
-	line_read = readline("minishell>");
+	line_read = readline("minishell> ");
 	if (line_read && *line_read)
 		add_history(line_read);
 	return (line_read);
