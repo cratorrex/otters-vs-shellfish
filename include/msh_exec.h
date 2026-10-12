@@ -55,6 +55,8 @@ void			close_executor_fds(t_executor *exec);
 void			execute_external_command(t_cmd *cmd, t_executor *exec);
 int				wait_for_children(t_executor *exec, t_shell *shell);
 int				execute_single_builtin(t_cmd *cmd, t_shell *shell);
+int	wait_for_children(t_executor *exec, t_shell *shell);
+int	get_child_error_status(t_executor *exec);
 int				execute_pipeline(t_cmd *cmd, t_shell *shell);
 char	*expand_heredoc_line(char *line, t_shell *shell);
 int	line_matches_delimiter(char *line, const char *delimiter);

@@ -28,6 +28,7 @@ SRCS = \
 	exec/msh_pxheredoc.c			\
 	exec/msh_exec_builtins.c		\
 	exec/msh_exec_helper.c 			\
+	exec/msh_exec_pipeline_helper.c \
 	exec/msh_exec_pipeline.c 		\
 	exec/msh_path_resolutions.c 	\
 	exec/msh_redirection_heredoc.c 	\
