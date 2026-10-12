@@ -33,7 +33,7 @@ static int	expand_argvs(t_cmd *cmd, t_shell *shell)
 	char	*new_str;
 
 	i = 0;
-	while (cmd->av[i])
+	while (cmd->av && cmd->av[i])
 	{
 		old_str = cmd->av[i];
 		new_str = expand_word(cmd->av[i], shell);
