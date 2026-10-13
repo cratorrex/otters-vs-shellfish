@@ -58,16 +58,25 @@ int	create_heredoc_temp_fd(char **path)
 	}
 }
 
-static int	append_read_character(char **line, size_t *length, char character)
+static int	append_read_character(char **line, size_t *length,
+		char character)
 {
 	char	*grown;
+	size_t	i;
 
-	grown = realloc(*line, *length + 2);
+	grown = malloc(*length + 2);
 	if (!grown)
 		return (-1);
+	i = 0;
+	while (i < *length)
+	{
+		grown[i] = (*line)[i];
+		i++;
+	}
+	grown[(*length)++] = character;
+	grown[*length] = '\0';
+	free(*line);
 	*line = grown;
-	(*line)[(*length)++] = character;
-	(*line)[*length] = '\0';
 	return (0);
 }
 
