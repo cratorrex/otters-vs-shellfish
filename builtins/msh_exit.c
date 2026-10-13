@@ -34,7 +34,7 @@ static int	isvalid_exit_arg(char *arg)
 	while (arg[i])
 	{
 		if (!(arg[i] >= '0' && arg[i] <= '9'))
-			return (ft_putstr_fd("minishell: exit:", 2),
+			return (ft_putstr_fd("minishell: exit: ", 2),
 				ft_putstr_fd(arg, 2),
 				ft_putstr_fd(": numeric argument required\n", 2), 0);
 		i++;
