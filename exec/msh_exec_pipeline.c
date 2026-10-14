@@ -35,6 +35,7 @@ static void	child_execute(t_cmd *cmd, t_executor *exec, int has_next)
 	int	status;
 
 	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	if (prepare_child_execution(cmd, exec, has_next) == -1)
 		exit(get_child_error_status(exec));
 	if (!cmd->av || !cmd->av[0])
