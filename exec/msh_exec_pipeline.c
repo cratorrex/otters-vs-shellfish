@@ -40,7 +40,7 @@ static void	child_execute(t_cmd *cmd, t_executor *exec, int has_next)
 		exit(get_child_error_status(exec));
 	if (!cmd->av || !cmd->av[0])
 	{
-		cleanup_child(cmd, exec);
+		cleanup_child(exec->shell->cmds, exec);
 		exit(0);
 	}
 	if (is_builtin_cmd(cmd->av[0]) != UNKNOWN_CMD)
