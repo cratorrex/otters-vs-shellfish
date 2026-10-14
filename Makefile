@@ -1,7 +1,7 @@
 NAME := minishell
 
 CC := cc
-CC_FLAGS := -Wall -Wextra -Werror -Iinclude -g
+CC_FLAGS := -Wall -Wextra -Werror -Iinclude
 LD_FLAGS := -lreadline -lhistory
 
 HEADER := minishell.h
