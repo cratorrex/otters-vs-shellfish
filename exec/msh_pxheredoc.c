@@ -48,7 +48,7 @@ static int	collect_heredoc_lines(int fd, const char *delimiter,
 		write(STDOUT_FILENO, "> ", 2);
 		errno = 0;
 		line = read_heredoc_line();
-		if (g_heredoc_interrupted)
+		if (g_signal_interrupt)
 			return (free(line), shell->exit_status = 130, -1);
 		if (!line)
 		{
@@ -104,7 +104,7 @@ int	create_heredoc_fd(const char *delimiter, int expand_content, t_shell *shell)
 	fd = create_heredoc_temp_fd(&path);
 	if (fd == -1)
 		return (perror("minishell: heredoc"), -1);
-	g_heredoc_interrupted = 0;
+	g_signal_interrupt = 0;
 	if (start_heredoc_signal(&old_action) == -1)
 	{
 		perror("minishell: sigaction");

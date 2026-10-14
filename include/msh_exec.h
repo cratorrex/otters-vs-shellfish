@@ -25,6 +25,7 @@ typedef struct s_executor
 }	t_executor;
 
 void			handle_sigint(int sig);
+void	setup_interactive_signals(void);
 void			heredoc_sigint(int sig);
 int				start_heredoc_signal(struct sigaction *old_action);
 int				end_heredoc_signal(struct sigaction *old_action);

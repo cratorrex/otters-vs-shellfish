@@ -25,7 +25,7 @@ getenv, tcsetattr, tcgetattr, tgetent, tgetflag,
 tgetnum, tgetstr, tgoto, tputs
 */
 
-volatile sig_atomic_t	g_heredoc_interrupted = 0;
+volatile sig_atomic_t	g_signal_interrupt = 0;
 
 static int	process_parsed_command(t_cmd *cmd, t_token *tokens,
 		t_shell *shell)
@@ -88,6 +88,11 @@ void	shell_loop(t_shell *shell)
 	while (!shell->should_exit)
 	{
 		line = rl_gets();
+		if (g_signal_interrupt == SIGINT)
+		{
+			shell->exit_status = 130;
+			g_signal_interrupt = 0;
+		}
 		if (!line)
 		{
 			printf("exit\n");
@@ -123,8 +128,7 @@ int	main(int argc, char **av, char **envp)
 		printf("minishell: failed to initialize shell\n");
 		return (1);
 	}
-	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, SIG_IGN);
+	setup_interactive_signals();
 	set_shell_level(&shell, get_env_value("SHLVL", shell.env));
 	shell_loop(&shell);
 	rl_clear_history();

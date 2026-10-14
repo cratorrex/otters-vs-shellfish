@@ -89,7 +89,7 @@ typedef struct s_shell
 	struct s_cmd	*cmds;
 }	t_shell;
 
-extern volatile sig_atomic_t	g_heredoc_interrupted;
+extern volatile sig_atomic_t	g_signal_interrupt;
 
 # endif
 #endif
