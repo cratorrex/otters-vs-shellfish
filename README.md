@@ -112,6 +112,17 @@ It will go through all arguments, and unset those variables that have an environ
 Exits the shell with the given numeric argument as the exit status, defaulting to 0 if no number is given.
 Giving 2 or more arguments will not exit the shell and will instead return an error.
 
+## Signals
+Signals are what can be sent to programs to tell them something is supposed to happen, be it that an error occurred and they're supposed to quit out of their subprocess or just a small interruption of their current action.
+
+Ctrl + C is the Interrupt signal (SIGINT), which is supposed to stop the current process running and return to the main process of the shell.
+
+Ctrl + D sends the End-of-File (EOF) character into the terminal, signaling the end of a given stream of input. This should do nothing if there is text on a given line. Otherwise it should end a collection process that processes input and allow that command to process whatever has been sent into it.  
+This also indirectly causes shell to exit. 
+
+Ctrl + \ is the Quit signal (SIGQUIT), which should forcefully stop a process unless handled properly.
+This should do nothing in the shell other than send the ^\ (Ctrl + \) symbol if in subprocesses. Output of this symbol can be curbed with the termios library, but otherwise it functionally affects nothing in the shell. 
+
 
 ## Considerations and Edge Cases
 
@@ -137,6 +148,11 @@ This compiles all sources in the repository into a `./minishell` executable file
 Run minishell by simply typing:
 ```bash
 ./minishell
+```
+
+In the case of checking for memory leaks, the readline library has its own inherent memory leaks that we are told not to worry about, so run valgrind with the suppression file to verify there are no leaks.
+```bash
+valgrind --leak-check=full --show-leak-kinds=all --suppressions=msh.supp ./minishell
 ```
 
 This implementation is intended to mimic the Bash shell, but using the POSIX standard.  
