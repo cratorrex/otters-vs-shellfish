@@ -6,7 +6,7 @@
 /*   By: jatansil <jatansil@42mail.sutd.edu.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/01 16:09:09 by jatansil          #+#    #+#             */
-/*   Updated: 2026/10/12 21:57:39 by jatansil         ###   ########.fr       */
+/*   Updated: 2026/10/14 15:30:44 by jatansil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,11 +88,7 @@ void	shell_loop(t_shell *shell)
 	while (!shell->should_exit)
 	{
 		line = rl_gets();
-		if (g_signal_interrupt == SIGINT)
-		{
-			shell->exit_status = 130;
-			g_signal_interrupt = 0;
-		}
+		signal_checker(shell);
 		if (!line)
 		{
 			printf("exit\n");

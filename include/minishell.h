@@ -6,7 +6,7 @@
 /*   By: jatansil <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/12 20:29:37 by jatansil          #+#    #+#             */
-/*   Updated: 2026/10/12 21:55:51 by jatansil         ###   ########.fr       */
+/*   Updated: 2026/10/14 15:29:43 by jatansil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 
 char					*rl_gets(void);
 void					free_line_buffer(char **line_buffer);
+void					signal_checker(t_shell *shell);
 
 int						isfound_space(char *line);
 int						is_delimiter(char c);

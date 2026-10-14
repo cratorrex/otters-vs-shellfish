@@ -54,7 +54,7 @@ static int	collect_heredoc_lines(int fd, const char *delimiter,
 		{
 			if (errno != 0)
 				return (perror("minishell: heredoc read"), -1);
-			ft_putstr_fd("minishell: warning: here-document ended by EOF\n",
+			ft_putstr_fd("\nminishell: warning: here-document ended by EOF\n",
 				STDERR_FILENO);
 			return (0);
 		}

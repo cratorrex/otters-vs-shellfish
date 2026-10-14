@@ -6,7 +6,7 @@
 /*   By: thtay <thtay@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/04 17:54:35 by thtay             #+#    #+#             */
-/*   Updated: 2026/10/12 21:55:02 by jatansil         ###   ########.fr       */
+/*   Updated: 2026/10/14 15:23:19 by jatansil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ typedef struct s_executor
 }	t_executor;
 
 void			handle_sigint(int sig);
-void	setup_interactive_signals(void);
+void			setup_interactive_signals(void);
 void			heredoc_sigint(int sig);
 int				start_heredoc_signal(struct sigaction *old_action);
 int				end_heredoc_signal(struct sigaction *old_action);

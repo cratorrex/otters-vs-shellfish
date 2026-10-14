@@ -6,7 +6,7 @@
 /*   By: jatansil <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/12 20:22:28 by jatansil          #+#    #+#             */
-/*   Updated: 2026/10/12 20:22:37 by jatansil         ###   ########.fr       */
+/*   Updated: 2026/10/14 15:29:45 by jatansil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,4 +47,13 @@ void	set_shell_level(t_shell *shell, char *shlvl)
 	}
 	free(av);
 	free(shlvl);
+}
+
+void	signal_checker(t_shell *shell)
+{
+	if (g_signal_interrupt == SIGINT)
+	{
+		shell->exit_status = 130;
+		g_signal_interrupt = 0;
+	}
 }
