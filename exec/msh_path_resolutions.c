@@ -61,7 +61,7 @@ char	*search_path_directories(char *path, char *cmd0)
 		candidate = join_path_command(path + start, end - start, cmd0);
 		if (!candidate)
 			return (NULL);
-		if (access(candidate, F_OK) == 0)
+		if (access(candidate, X_OK) == 0)
 			return (candidate);
 		free(candidate);
 		if (!path[end])
