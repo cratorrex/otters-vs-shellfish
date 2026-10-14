@@ -42,9 +42,6 @@ static int	isvalid_exit_arg(char *arg)
 	return (1);
 }
 
-/* Note: return value is the shell exit status, handle later
-	CTRL^D should call this function
-*/
 long	msh_exit(t_shell *shell, char **av)
 {
 	int		argc;
