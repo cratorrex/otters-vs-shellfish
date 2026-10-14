@@ -21,13 +21,17 @@ int	execute_builtin(t_cmd *cmd, t_shell *shell)
 
 static int	execute_builtin_with_redirs(t_cmd *cmd, t_shell *shell)
 {
+	int	status;
+
 	if (setup_redirections(cmd->redirs, shell) == -1)
 	{
 		if (shell->exit_status == 130)
 			return (130);
 		return (1);
 	}
-	return (execute_builtin(cmd, shell));
+	errno = 0;
+	status = execute_builtin(cmd, shell);
+	return (status + (!status && errno));
 }
 
 static int	save_standard_fds(int *saved_stdin, int *saved_stdout)
